@@ -1,0 +1,8 @@
+R_DEF: Internal format may change without notice
+local
+color colorAccent
+color primary
+color primary_dark
+color windowBackground
+string app_name
+style AppTheme

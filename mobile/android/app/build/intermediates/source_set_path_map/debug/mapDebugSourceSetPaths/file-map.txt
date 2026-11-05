@@ -1,0 +1,35 @@
+com.attendx.app-lifecycle-viewmodel-2.6.1-0 C:\Users\ADMIN\.gradle\caches\8.14\transforms\119f749ef5efd8304d2d756a1e6725bc\transformed\lifecycle-viewmodel-2.6.1\res
+com.attendx.app-jetified-startup-runtime-1.1.1-1 C:\Users\ADMIN\.gradle\caches\8.14\transforms\170e034a8be6aa720c19e0a914857070\transformed\jetified-startup-runtime-1.1.1\res
+com.attendx.app-jetified-emoji2-views-helper-1.2.0-2 C:\Users\ADMIN\.gradle\caches\8.14\transforms\1e1f93c9c9011f5c90f1f0de102e56cd\transformed\jetified-emoji2-views-helper-1.2.0\res
+com.attendx.app-transition-1.2.0-3 C:\Users\ADMIN\.gradle\caches\8.14\transforms\267dbf1a03fa26612edb6b1abf92a08a\transformed\transition-1.2.0\res
+com.attendx.app-jetified-lifecycle-process-2.6.1-4 C:\Users\ADMIN\.gradle\caches\8.14\transforms\329bab3a66ab8e0e48a7c3d7b537ac67\transformed\jetified-lifecycle-process-2.6.1\res
+com.attendx.app-webkit-1.10.0-5 C:\Users\ADMIN\.gradle\caches\8.14\transforms\33f807cde73997949644b5507c174bb9\transformed\webkit-1.10.0\res
+com.attendx.app-lifecycle-runtime-2.6.1-6 C:\Users\ADMIN\.gradle\caches\8.14\transforms\4553b517b08ef12617a102effb273eac\transformed\lifecycle-runtime-2.6.1\res
+com.attendx.app-drawerlayout-1.1.1-7 C:\Users\ADMIN\.gradle\caches\8.14\transforms\4b6ba6abd2a1408c3d3cc65563785179\transformed\drawerlayout-1.1.1\res
+com.attendx.app-jetified-annotation-experimental-1.3.0-8 C:\Users\ADMIN\.gradle\caches\8.14\transforms\5018fdef9710160768a510f9108847b9\transformed\jetified-annotation-experimental-1.3.0\res
+com.attendx.app-recyclerview-1.1.0-9 C:\Users\ADMIN\.gradle\caches\8.14\transforms\522c898f6ca9b61fd2d981f19368e448\transformed\recyclerview-1.1.0\res
+com.attendx.app-jetified-viewpager2-1.0.0-10 C:\Users\ADMIN\.gradle\caches\8.14\transforms\5bb36ad2fa3c5c694d683a16bb4aca27\transformed\jetified-viewpager2-1.0.0\res
+com.attendx.app-core-1.9.0-11 C:\Users\ADMIN\.gradle\caches\8.14\transforms\63b3d054840ca47e3e381b2df30e9923\transformed\core-1.9.0\res
+com.attendx.app-jetified-emoji2-1.2.0-12 C:\Users\ADMIN\.gradle\caches\8.14\transforms\64ff81425f9dbab259b92a5a9bd70a26\transformed\jetified-emoji2-1.2.0\res
+com.attendx.app-jetified-activity-1.8.0-13 C:\Users\ADMIN\.gradle\caches\8.14\transforms\65339222d8ed19110bfd1b9019a61673\transformed\jetified-activity-1.8.0\res
+com.attendx.app-jetified-lifecycle-viewmodel-savedstate-2.6.1-14 C:\Users\ADMIN\.gradle\caches\8.14\transforms\6b110ab36a0e7671d18fbff3ea211a2f\transformed\jetified-lifecycle-viewmodel-savedstate-2.6.1\res
+com.attendx.app-cardview-1.0.0-15 C:\Users\ADMIN\.gradle\caches\8.14\transforms\7496eed40a23b0f38dbe4152e98992a8\transformed\cardview-1.0.0\res
+com.attendx.app-fragment-1.3.6-16 C:\Users\ADMIN\.gradle\caches\8.14\transforms\74ca2e2e5e351cf5aebf43ef4c99f595\transformed\fragment-1.3.6\res
+com.attendx.app-jetified-appcompat-resources-1.6.1-17 C:\Users\ADMIN\.gradle\caches\8.14\transforms\7f8be122635a78a33b66bdea2217670c\transformed\jetified-appcompat-resources-1.6.1\res
+com.attendx.app-jetified-savedstate-1.2.1-18 C:\Users\ADMIN\.gradle\caches\8.14\transforms\7faea1385d8e435f1043f114c34297c4\transformed\jetified-savedstate-1.2.1\res
+com.attendx.app-lifecycle-livedata-2.6.1-19 C:\Users\ADMIN\.gradle\caches\8.14\transforms\89b44b3bd4e31f44463d653ed9c3963b\transformed\lifecycle-livedata-2.6.1\res
+com.attendx.app-jetified-profileinstaller-1.3.0-20 C:\Users\ADMIN\.gradle\caches\8.14\transforms\912d016d729a82a648f02669a7bd1f96\transformed\jetified-profileinstaller-1.3.0\res
+com.attendx.app-jetified-core-ktx-1.9.0-21 C:\Users\ADMIN\.gradle\caches\8.14\transforms\9bc9244cf0070092b7fffcbb15d561a9\transformed\jetified-core-ktx-1.9.0\res
+com.attendx.app-core-runtime-2.2.0-22 C:\Users\ADMIN\.gradle\caches\8.14\transforms\b7b288b0c457bc64cd529dadad6b4524\transformed\core-runtime-2.2.0\res
+com.attendx.app-lifecycle-livedata-core-2.6.1-23 C:\Users\ADMIN\.gradle\caches\8.14\transforms\b90e628dc93eb336fd2f282c6dd5030a\transformed\lifecycle-livedata-core-2.6.1\res
+com.attendx.app-material-1.11.0-24 C:\Users\ADMIN\.gradle\caches\8.14\transforms\dcb6bc4a79dd8dc6f8104ea34260a850\transformed\material-1.11.0\res
+com.attendx.app-appcompat-1.6.1-25 C:\Users\ADMIN\.gradle\caches\8.14\transforms\dee5ca9314547bd3a583bab3b9dd69b8\transformed\appcompat-1.6.1\res
+com.attendx.app-coordinatorlayout-1.1.0-26 C:\Users\ADMIN\.gradle\caches\8.14\transforms\e56616126f4721af62df6020e81eb1c7\transformed\coordinatorlayout-1.1.0\res
+com.attendx.app-constraintlayout-2.1.4-27 C:\Users\ADMIN\.gradle\caches\8.14\transforms\eb23d9a0f4dbf651e3bc8614bdcba9b7\transformed\constraintlayout-2.1.4\res
+com.attendx.app-pngs-28 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\build\generated\res\pngs\debug
+com.attendx.app-resValues-29 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\build\generated\res\resValues\debug
+com.attendx.app-packageDebugResources-30 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.attendx.app-packageDebugResources-31 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.attendx.app-debug-32 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.attendx.app-debug-33 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\src\debug\res
+com.attendx.app-main-34 C:\Users\ADMIN\3D Objects\AttendX\mobile\android\app\src\main\res

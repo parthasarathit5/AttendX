@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: attendx-backend
+  
+  datasource:
+    # Supabase PostgreSQL configuration with fallback to local H2 in-memory DB
+    url: ${SUPABASE_DB_URL:jdbc:h2:mem:attendx_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL}
+    username: ${SUPABASE_DB_USER:sa}
+    password: ${SUPABASE_DB_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+attendx:
+  attendance:
+    minimum-percentage: 75.0
+    exam-fee-amount: 1500
+  supabase:
+    project-url: ${SUPABASE_URL:https://xyzcompany.supabase.co}
+    anon-key: ${SUPABASE_ANON_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy}
