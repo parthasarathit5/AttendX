@@ -17,3 +17,6 @@ mobile/android/local.properties
 backups/*.dump
 backups/*.sql
 
+# Firebase build cache
+.firebase/
+

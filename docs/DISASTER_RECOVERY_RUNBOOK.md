@@ -62,3 +62,4 @@ The automated restoration script verifies the presence and integrity of all 10 c
    `SUPABASE_DB_URL=jdbc:postgresql://db.<restored-ref>.supabase.co:5432/postgres?sslmode=require`
 2. Restart the Render Web Service.
 3. Call `GET /api/v1/health` and verify HTTP 200 `UP`.
+

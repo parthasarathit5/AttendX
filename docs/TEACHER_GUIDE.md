@@ -44,3 +44,4 @@ Welcome to **AttendX**. This guide instructs teaching faculty on how to record l
 4. Export options:
    - **Export to Excel**: Downloads a native `.xlsx` workbook generated server-side by Apache POI with all student roll numbers, attendance statuses, and percentage calculations.
    - **Print Attendance Sheet**: Triggers print-optimized A4 layout formatted for physical filing and departmental sign-off.
+

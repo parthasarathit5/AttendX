@@ -34,3 +34,4 @@ The Spring Boot backend and Logback logging system enforce strict data privacy:
 | **Database Pool Exhaustion** | Latency > 2000ms; Hikari timeouts | Increase `HIKARI_MAX_POOL_SIZE` in Render env vars; verify long-running queries | Lead DBA |
 | **Elevated Duplicate Rejections** | Spike in 409 Conflict logs | Inspect network connectivity at campus terminal; confirm teachers aren't double-submitting | Academic Coordinator |
 | **Authentication Failures** | Sudden spike in 401 Unauthorized | Check Supabase Auth service status at `status.supabase.com`; check JWT secret sync | Security Lead |
+

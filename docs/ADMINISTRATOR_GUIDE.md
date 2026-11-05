@@ -85,3 +85,4 @@ Official registration numbers must remain globally unique within the institution
 3. **Exporting Official `.xlsx` Workbooks**:
    - Click **Export Excel (XLSX)**.
    - The Spring Boot backend uses Apache POI to generate a binary `.xlsx` workbook featuring institutional letterheads, Saveetha styling, formula summaries, and timestamps.
+

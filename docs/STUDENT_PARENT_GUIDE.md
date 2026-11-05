@@ -37,3 +37,4 @@ This guide describes how students and parents access course attendance records, 
   - Live attendance percentages for each enrolled child.
   - Immediate shortfall alerts if attendance drops below the 75% regulatory threshold.
   - Detailed daily lecture logs and approved On-Duty (OD) statuses.
+
