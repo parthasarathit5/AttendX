@@ -182,3 +182,4 @@ if (require.main === module) {
   const suite = new ValidationTestSuite();
   suite.runAll();
 }
+

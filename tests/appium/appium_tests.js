@@ -132,3 +132,4 @@ if (require.main === module) {
   const suite = new AppiumMobileTestSuite();
   suite.runAll();
 }
+
