@@ -453,3 +453,4 @@ const AttendanceService = {
 // Initialize service state
 AttendanceService.init();
 window.AttendanceService = AttendanceService;
+

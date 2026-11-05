@@ -1,25 +1,44 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
+  shutdown: graceful
 
 spring:
   application:
     name: attendx-backend
-  
+
   datasource:
-    # Supabase PostgreSQL configuration with fallback to local H2 in-memory DB
     url: ${SUPABASE_DB_URL:jdbc:h2:mem:attendx_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL}
-    username: ${SUPABASE_DB_USER:sa}
+    username: ${SUPABASE_DB_USERNAME:sa}
     password: ${SUPABASE_DB_PASSWORD:}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+    hikari:
+      pool-name: AttendXHikariPool
+      maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:10}
+      minimum-idle: ${HIKARI_MIN_IDLE:2}
+      idle-timeout: 300000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      auto-commit: true
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: false
+      ddl-auto: ${HIBERNATE_DDL_AUTO:none}
+    show-sql: ${SHOW_SQL:false}
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
-        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.H2Dialect}
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    validate-on-migrate: true
 
   h2:
     console:
@@ -28,10 +47,26 @@ spring:
       settings:
         web-allow-others: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
 attendx:
+  institution:
+    id: inst-sse-001
   attendance:
-    minimum-percentage: 75.0
+    default-threshold: 75.0
+    debarred-threshold: 65.0
     exam-fee-amount: 1500
-  supabase:
-    project-url: ${SUPABASE_URL:https://xyzcompany.supabase.co}
-    anon-key: ${SUPABASE_ANON_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy}
+  security:
+    jwt-issuer: ${SUPABASE_JWT_ISSUER:https://xyzcompany.supabase.co/auth/v1}
+    jwks-url: ${SUPABASE_JWKS_URL:https://xyzcompany.supabase.co/auth/v1/.well-known/jwks.json}
+    jwt-secret: ${SUPABASE_JWT_SECRET:}
+    mock-tokens-enabled: ${MOCK_TOKENS_ENABLED:true}
+  cors:
+    allowed-origins: ${APP_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:8080,https://attendx.onrender.com,https://vstudy.saveetha.com}
