@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "target": "attendx",
     "public": "frontend",
     "ignore": [
       "firebase.json",

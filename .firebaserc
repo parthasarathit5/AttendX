@@ -1,14 +1,5 @@
 {
   "projects": {
-    "default": "lifeledger-29015"
-  },
-  "targets": {
-    "lifeledger-29015": {
-      "hosting": {
-        "attendx": [
-          "attendx-lms"
-        ]
-      }
-    }
+    "default": "attendx-saveetha-2026"
   }
 }
