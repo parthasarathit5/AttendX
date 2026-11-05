@@ -3,697 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AttendX — LMS Attendance &amp; Course Window</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e40af'><path d='M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 13l-7-3.18V17c0 3.31 3.13 6 7 6s7-2.69 7-6v-5.18L12 15z'/></svg>">
+  <title>MaccaAttendX — Saveetha V-Study LMS Attendance Management</title>
+  <meta name="description" content="Production LMS Attendance Management System inspired by Saveetha V-Study Portal">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- MaccaAttendX Design System Stylesheets -->
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
-<div class="app-container">
-  <!-- Left Collapsible Sidebar (V-Study Navigation Architecture) -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a href="#" class="brand-wrapper">
-        <div class="brand-icon">
-          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
-        </div>
-        <div class="brand-text">
-          <div class="brand-title">Attend<span>X</span></div>
-          <div class="brand-subtitle">SIMATS SSE LMS</div>
-        </div>
-      </a>
-    </div>
+  <!-- Master App Wrapper -->
+  <div class="app-wrapper">
 
-    <div class="sidebar-nav">
-      <div class="nav-section-title">Academic LMS</div>
-      <button class="nav-item">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-        <span class="nav-label">Dashboard</span>
-      </button>
+    <!-- Mobile Drawer Backdrop -->
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
 
-      <button class="nav-item active">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        <span class="nav-label">My Learning</span>
-      </button>
-
-      <div class="nav-section-title">Attendance Telemetry</div>
-      <button class="nav-item" onclick="switchTab('attendance')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        <span class="nav-label">Attendance Logs</span>
-      </button>
-
-      <button class="nav-item student-only" onclick="openModal('qrScannerModal')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-        <span class="nav-label">QR Check-in</span>
-      </button>
-
-      <button class="nav-item" onclick="openModal('odApplicationModal')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        <span class="nav-label">On-Duty (OD) Requests</span>
-      </button>
-
-      <button class="nav-item" onclick="openModal('timetableModal')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="nav-label">Course Timetable</span>
-      </button>
-
-      <div class="nav-section-title">Cloud &amp; Database</div>
-      <button class="nav-item" onclick="openModal('supabaseModal')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-        <span class="nav-label">Supabase Sync</span>
-      </button>
-    </div>
-
-    <div class="sidebar-footer">
-      <div style="font-size: 0.72rem; color: #94a3b8;">
-        <div>AttendX v1.0.0 (LMS)</div>
-        <div style="font-size: 0.65rem;">Engineered for SIMATS SSE</div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Content Wrapper -->
-  <main class="main-content">
-    <!-- Top Sticky Header -->
-    <header class="top-header">
-      <div class="header-left">
-        <button class="toggle-sidebar-btn" id="toggleSidebarBtn" title="Toggle Sidebar">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-
-        <div class="breadcrumb-nav">
-          <a href="#">LMS</a>
-          <span class="breadcrumb-separator">/</span>
-          <a href="#">My Learning</a>
-          <span class="breadcrumb-separator">/</span>
-          <span class="breadcrumb-active">Course Window</span>
-        </div>
+    <!-- Collapsible Left Sidebar (Saveetha V-Study Navigation) -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Sidebar Brand Header -->
+      <div class="sidebar-brand">
+        <a href="javascript:void(0)" onclick="Navigation.navigateTo('dashboard')" class="brand-container">
+          <div class="brand-emblem">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+          </div>
+          <div class="brand-details">
+            <span class="brand-name">MaccaAttendX</span>
+            <span class="brand-subtext">Saveetha V-Study LMS</span>
+          </div>
+        </a>
       </div>
 
-      <div class="header-search">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="globalSearchInput" placeholder="Search sessions, topics, or attendance records...">
+      <!-- Dynamic Navigation Menu by Active Role -->
+      <div class="sidebar-nav" id="sidebarNavContent">
+        <!-- Rendered by Navigation.renderSidebar() -->
       </div>
 
-      <div class="header-right">
-        <!-- Interactive Role Switcher for Pair Evaluation -->
-        <div class="role-switch-container">
-          <button class="role-pill active" id="roleStudentBtn">Student</button>
-          <button class="role-pill" id="roleFacultyBtn">Faculty</button>
-        </div>
-
-        <div class="profile-chip" onclick="openHallTicketModal()">
-          <div class="profile-avatar">AK</div>
-          <div class="profile-meta">
-            <span class="profile-name" id="profileName">Arun Kumar S</span>
-            <span class="profile-reg" id="profileReg">192111001 • CSE</span>
+      <!-- Sidebar Status Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-info">
+          <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.78rem;">SIMATS Engineering</div>
+          <div style="font-size: 0.7rem; color: var(--present-green); display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--present-green);"></span>
+            Spring Boot JPA &bull; Supabase Live
           </div>
         </div>
       </div>
-    </header>
+    </aside>
 
-    <!-- Page Body Container -->
-    <div class="page-body">
-      
-      <!-- Primary Saveetha V-Study Course Window Card -->
-      <section class="course-window-card">
-        <div class="course-window-header">
-          <div class="course-info-group">
-            <div class="course-badge-row">
-              <span class="badge-course-code" id="courseCodeBadge">21CS301</span>
-              <span class="badge-credits" id="creditsBadge">4 Credits</span>
-              <span class="badge-offering-id" onclick="copyOfferingId()" title="Click to copy Course Offering UUID">
-                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                ID: <span id="offeringIdText">2851d026-2f7b-46c4-92a5-053cf5e4f57d</span>
-              </span>
-            </div>
+    <!-- Main Application Shell -->
+    <div class="main-wrapper">
 
-            <h1 class="course-title" id="courseTitle">Distributed Cloud Computing &amp; Attendance Telemetry</h1>
-
-            <div class="course-meta-text">
-              <span class="course-meta-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span id="facultyNameText">Dr. K. Ravichandran, M.E., Ph.D.</span>
-              </span>
-              <span class="course-meta-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                <span id="academicYearText">2025-2026 • Semester VI</span>
-              </span>
-              <span class="course-meta-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                <span id="departmentText">Department of Computer Science and Engineering</span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Quick Action Buttons Row (Directly from V-Study) -->
-          <div class="course-actions-group">
-            <div class="action-buttons-row">
-              <button class="btn-secondary" onclick="openModal('timetableModal')" title="View this course's timetable">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Timetable
-              </button>
-              
-              <button class="btn-secondary" onclick="openHallTicketModal()" title="Print Hall Ticket">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                Hall Ticket
-              </button>
-
-              <button class="btn-primary" id="payExamFeesBtn" onclick="showToast('Exam fee gateway initialized. Status: Eligible.', 'success')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Pay Exam Fees (₹1,500)
-              </button>
-            </div>
-
-            <div class="fee-warning-notice" id="examFeeWarning" style="display: none;">
-              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              <span id="shortfallWarningText">Attendance is below the required 75.0%. Clear shortfall to unlock.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rounded Pill Tabs (Exact V-Study Tabs: Overview, Topics, Sessions, To Do, Attendance, Grading) -->
-        <nav class="tab-navigation-bar">
-          <button class="pill-tab" data-tab="overview">Overview</button>
-          <button class="pill-tab" data-tab="topics">Topics</button>
-          <button class="pill-tab" data-tab="sessions">Sessions</button>
-          <button class="pill-tab" data-tab="todo">To Do</button>
-          <button class="pill-tab active" data-tab="attendance">
-            Attendance
-            <span class="tab-badge" id="attendanceBadgeCount">Live</span>
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
           </button>
-          <button class="pill-tab" data-tab="grading">Grading</button>
-        </nav>
-      </section>
 
-      <!-- ====================================================================
-           TAB PANE 1: ATTENDANCE (PRIMARY FOCUS)
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-attendance" style="display: block;">
-        
-        <!-- 4-Card Metric Grid (Directly mirroring V-Study layout) -->
-        <div class="attendance-metric-grid">
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Total Sessions</span>
-              <div class="metric-icon-bubble bubble-blue">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <!-- Breadcrumb Navigation -->
+          <nav class="breadcrumb-container" aria-label="Breadcrumb">
+            <a href="javascript:void(0)" onclick="Navigation.navigateTo('dashboard')" class="breadcrumb-item">V-Study LMS</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current" id="breadcrumbCurrent">Dashboard</span>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Search Input -->
+          <div class="search-wrapper">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" class="search-input" id="globalSearchInput" placeholder="Search students, subjects, classes... [Enter]">
+          </div>
+
+          <!-- Quick Role Perspective Switcher Pill -->
+          <div class="role-switcher-pill" title="Switch portal perspective for pair-programming & verification">
+            <button class="role-btn active" data-role="ADMIN">Admin</button>
+            <button class="role-btn" data-role="TEACHER">Teacher</button>
+            <button class="role-btn" data-role="STUDENT">Student</button>
+            <button class="role-btn" data-role="PARENT">Parent</button>
+          </div>
+
+          <!-- Notification Trigger -->
+          <div style="position: relative;">
+            <button class="notification-trigger" id="notificationTrigger" aria-label="Notifications">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <span class="notification-ping" id="notificationPing"></span>
+            </button>
+
+            <!-- Notifications Dropdown Panel -->
+            <div class="dropdown-panel" id="notificationPanel" style="width: 360px; right: 0;">
+              <div class="dropdown-header">
+                <span class="dropdown-title">System Notifications</span>
+                <button class="btn btn-sm btn-text" onclick="App.markAllNotificationsRead()" style="font-size: 0.72rem; padding: 0;">Mark all read</button>
+              </div>
+              <div class="dropdown-body" id="notificationList">
+                <!-- Rendered dynamically -->
               </div>
             </div>
-            <div class="metric-value" id="metricTotalSessions">0</div>
-            <div class="metric-footer">Syllabus lectures completed</div>
           </div>
 
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Present Sessions</span>
-              <div class="metric-icon-bubble bubble-green">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <!-- User Profile Trigger & Dropdown -->
+          <div style="position: relative;">
+            <div class="profile-chip" id="userProfileTrigger">
+              <div class="avatar-badge" id="topbarUserAvatar">AD</div>
+              <div class="profile-info">
+                <span class="profile-name" id="topbarUserName">Dr. V. Rajesh</span>
+                <span class="profile-role-tag" id="topbarUserRole">Dean of Academics</span>
+              </div>
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--text-light); margin-left: 0.2rem;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="dropdown-panel" id="userProfileDropdown" style="width: 250px; right: 0;">
+              <div class="dropdown-header" style="flex-direction: column; align-items: flex-start;">
+                <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.88rem;" id="dropUserName">Dr. V. Rajesh</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;" id="dropUserEmail">rajesh.dean@saveetha.ac.in</div>
+              </div>
+              <div class="dropdown-body">
+                <div class="dropdown-item" onclick="Navigation.navigateTo('profile')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  <span>My Profile &amp; Bio</span>
+                </div>
+                <div class="dropdown-item" onclick="Navigation.navigateTo('settings')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+                  <span>Security &amp; Preferences</span>
+                </div>
+                <div class="dropdown-item" style="color: var(--absent-red);" onclick="App.toast('Session terminated safely', 'info'); Navigation.navigateTo('dashboard');">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                  <span>Sign Out</span>
+                </div>
               </div>
             </div>
-            <div class="metric-value" id="metricPresentSessions" style="color: #059669;">0</div>
-            <div class="metric-footer">Includes verified physical &amp; QR check-ins</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Absent Sessions</span>
-              <div class="metric-icon-bubble bubble-red">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-              </div>
-            </div>
-            <div class="metric-value" id="metricAbsentSessions" style="color: #dc2626;">0</div>
-            <div class="metric-footer">Unexcused absences without OD</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-title">Attendance %</span>
-              <div class="metric-icon-bubble bubble-blue">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-              </div>
-            </div>
-            <div class="metric-value" id="metricAttendancePct">0.00%</div>
-            <div class="metric-footer">Minimum requirement: 75.00%</div>
           </div>
         </div>
+      </header>
 
-        <!-- Attendance Threshold & Exam Eligibility Banner -->
-        <div class="attendance-alert-banner">
-          <div class="alert-status-left">
-            <div class="alert-indicator-dot eligible" id="statusIndicatorDot"></div>
-            <div>
-              <div class="alert-title" id="eligibilityTitle">Checking Academic Eligibility...</div>
-              <div class="alert-subtitle" id="eligibilityDesc">Calculation in progress</div>
+      <!-- Saveetha V-Study Course Window Sub-Bar (Direct reference alignment) -->
+      <div class="course-header-bar" style="background: #FFFFFF; border-bottom: 1px solid var(--border-light); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--light-blue); color: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">
+            SSE
+          </div>
+          <div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.9rem;">
+              CS301 &bull; Design and Analysis of Algorithms
             </div>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="progress-track">
-              <div class="progress-fill green" id="eligibilityProgressFill" style="width: 85%;"></div>
-            </div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #475569;">Target: 75%</span>
-          </div>
-        </div>
-
-        <!-- Table View: Session Attendance Logs -->
-        <div class="table-container-card">
-          <div class="table-toolbar">
-            <div class="table-title">Course Session Logs</div>
-
-            <div class="table-actions">
-              <!-- Filter Select -->
-              <select class="filter-select" id="attendanceFilterSelect">
-                <option value="all">All Sessions</option>
-                <option value="present">Present Only</option>
-                <option value="on_duty">On-Duty (OD)</option>
-                <option value="absent">Absent Only</option>
-              </select>
-
-              <!-- Student QR Check-in Button -->
-              <button class="btn-primary student-only" onclick="openModal('qrScannerModal')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-                Scan QR Code
-              </button>
-
-              <!-- Apply OD Button -->
-              <button class="btn-secondary student-only" onclick="openModal('odApplicationModal')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Apply OD Leave
-              </button>
-
-              <!-- Faculty Mark Attendance Button -->
-              <button class="btn-primary faculty-only" style="display: none;" onclick="openEditAttendanceModal(1, 'present')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                Faculty Mark Attendance
-              </button>
-
-              <!-- Export CSV Button -->
-              <button class="btn-secondary" onclick="exportAttendanceSheet()">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                Export CSV
-              </button>
-            </div>
-          </div>
-
-          <div style="overflow-x: auto;">
-            <table class="vstudy-table">
-              <thead>
-                <tr>
-                  <th style="width: 50px;">S.No</th>
-                  <th>Date</th>
-                  <th>Session</th>
-                  <th>Status</th>
-                  <th>Verification</th>
-                  <th>Faculty Remarks</th>
-                </tr>
-              </thead>
-              <tbody id="attendanceTableBody">
-                <!-- Dynamically Populated from REST API -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- OD Requests Collapsible Section -->
-        <div class="table-container-card" style="margin-top: 1.5rem;">
-          <div class="table-toolbar">
-            <div class="table-title">Recent On-Duty (OD) &amp; Leave Applications</div>
-            <button class="btn-secondary" onclick="openModal('odApplicationModal')">+ New Application</button>
-          </div>
-          <div id="odListContainer" style="padding: 1rem;">
-            <!-- Dynamically Populated -->
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ====================================================================
-           TAB PANE 2: OVERVIEW
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-overview" style="display: none;">
-        <div class="course-window-card">
-          <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem;">Course Description &amp; Objectives</h3>
-          <p id="overviewCourseDesc" style="color: #475569; font-size: 0.88rem; line-height: 1.7; margin-bottom: 1.5rem;">
-            Loading description...
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <h4 style="font-size: 0.85rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">Course Coordinator</h4>
-              <p id="overviewCoordinator" style="font-size: 0.825rem; color: #334155;">Dr. K. Ravichandran</p>
-              <p style="font-size: 0.75rem; color: #64748b;">ravichandran.cse@saveetha.com • SSE Cabin A-304</p>
-            </div>
-
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <h4 style="font-size: 0.85rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">Attendance Policy</h4>
-              <p style="font-size: 0.825rem; color: #334155;">75.0% minimum physical attendance is mandatory for semester end examination hall ticket clearance.</p>
-              <p style="font-size: 0.75rem; color: #64748b;">Approved On-Duty (OD) counts towards physical attendance.</p>
+            <div style="font-size: 0.74rem; color: var(--text-muted);">
+              Course Offering ID: <code style="font-family: monospace; font-size: 0.72rem; background: var(--bg-main); padding: 1px 4px; border-radius: 4px;">2851d026-2f7b-46c4-92a5-053cf5e4f57d</code>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- ====================================================================
-           TAB PANE 3: TOPICS
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-topics" style="display: none;">
-        <div id="topicsContainer">
-          <!-- Dynamically Populated Topics -->
+        <!-- Course Window Navigation Tabs (Overview, Topics, Sessions, Attendance, Assignments, Grading) -->
+        <div class="course-window-tabs" style="display: flex; gap: 0.35rem; background: var(--bg-main); padding: 0.25rem; border-radius: var(--radius-full); border: 1px solid var(--border-card);">
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('dashboard')">Overview</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('subjects')">Topics</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('timetable')">Sessions</button>
+          <button class="btn btn-sm btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('attendance')">Attendance</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('calendar')">Calendar</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('reports')">Reports</button>
         </div>
       </div>
 
-      <!-- ====================================================================
-           TAB PANE 4: SESSIONS
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-sessions" style="display: none;">
-        <div id="sessionsContainer">
-          <!-- Dynamically Populated Sessions with Before, In, After Class -->
-        </div>
-      </div>
+      <!-- Main Workspace Container (Dynamic View Port) -->
+      <main class="workspace-body" id="mainWorkspaceContainer">
+        <!-- Rendered dynamically by Dashboard.renderView() / AttendanceModule / CalendarModule / ReportsModule -->
+      </main>
 
-      <!-- ====================================================================
-           TAB PANE 5: TO DO
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-todo" style="display: none;">
-        <div class="table-container-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Assignments &amp; Continuous Assessments</h3>
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <div>
-                <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">Distributed Clock Synchronization Quiz</div>
-                <div style="font-size: 0.75rem; color: #64748b;">Due Date: 12 Nov 2026 • Weightage: 5 Marks</div>
-              </div>
-              <span class="status-pill present">Completed</span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <div>
-                <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">Supabase Cloud Schema &amp; RLS Configuration</div>
-                <div style="font-size: 0.75rem; color: #64748b;">Due Date: 20 Nov 2026 • Weightage: 10 Marks</div>
-              </div>
-              <span class="status-pill on_duty">Pending Submission</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ====================================================================
-           TAB PANE 6: GRADING
-           ==================================================================== -->
-      <div class="tab-pane" id="tab-grading" style="display: none;">
-        <div class="table-container-card" style="padding: 1.5rem;">
-          <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">Continuous Internal Evaluation (CIE)</h3>
-          <table class="vstudy-table">
-            <thead>
-              <tr>
-                <th>Component</th>
-                <th>Maximum Marks</th>
-                <th>Awarded Marks</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Attendance Discipline (>80%)</strong></td>
-                <td>5</td>
-                <td><strong style="color: #059669;">5</strong></td>
-                <td><span class="status-pill present">Credited</span></td>
-              </tr>
-              <tr>
-                <td>Continuous Assessment Test 1 (CAT-1)</td>
-                <td>50</td>
-                <td>46</td>
-                <td><span class="status-pill present">Pass</span></td>
-              </tr>
-              <tr>
-                <td>Continuous Assessment Test 2 (CAT-2)</td>
-                <td>50</td>
-                <td>44</td>
-                <td><span class="status-pill present">Pass</span></td>
-              </tr>
-              <tr>
-                <td>Laboratory Telemetry Practicum</td>
-                <td>30</td>
-                <td>28</td>
-                <td><span class="status-pill present">Pass</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </main>
-</div>
-
-<!-- ==========================================================================
-     MODALS
-     ========================================================================== -->
-
-<!-- QR Scanner / Manual Token Modal (Student Check-in) -->
-<div class="modal-overlay" id="qrScannerModal">
-  <div class="modal-window">
-    <div class="modal-header">
-      <h3 class="modal-title">Attendance QR Code Check-in</h3>
-      <button class="modal-close-btn" onclick="closeModal('qrScannerModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div style="text-align: center; margin-bottom: 1.25rem;">
-        <div style="width: 54px; height: 54px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
-          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-        </div>
-        <p style="font-size: 0.85rem; color: #475569;">Enter or scan the rotating session token displayed on the classroom projection screen.</p>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Session QR Token</label>
-        <input type="text" class="form-input" id="qrTokenInput" placeholder="e.g. ATTENDX:2851d026-2f7b-46c4-92a5-053cf5e4f57d:10:LIVE_SESSION" value="ATTENDX:2851d026-2f7b-46c4-92a5-053cf5e4f57d:10:LIVE_SESSION">
-      </div>
-
-      <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 0.75rem; font-size: 0.75rem; color: #64748b;">
-        <strong>Live Geofence Guard:</strong> Attendance coordinates verified within Saveetha School of Engineering campus boundary.
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('qrScannerModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitQrCheckIn()">Verify &amp; Check In</button>
     </div>
   </div>
-</div>
 
-<!-- Faculty QR Generator Modal -->
-<div class="modal-overlay" id="qrDisplayModal">
-  <div class="modal-window">
-    <div class="modal-header">
-      <h3 class="modal-title">Live Session QR Code — Session #<span id="qrModalSessionNumber">10</span></h3>
-      <button class="modal-close-btn" onclick="closeModal('qrDisplayModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="qr-display-container">
-        <div class="qr-image-wrapper">
-          <img id="qrModalImage" src="" alt="Dynamic QR Code">
-        </div>
-        <div class="qr-token-pill" id="qrModalTokenText">Generating token...</div>
-        <p style="font-size: 0.78rem; color: #64748b;">Instruct students to scan with AttendX mobile app or enter the token above.</p>
+  <!-- Reusable Global Modal Scrim & Dialog -->
+  <div class="modal-scrim" id="globalModalScrim">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <h3 class="modal-title" id="globalModalTitle">System Confirmation</h3>
+        <span class="modal-close-icon" id="globalModalClose">&times;</span>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-primary" onclick="closeModal('qrDisplayModal')">Done</button>
+      <div class="modal-content" id="globalModalContent">
+        <!-- Injected via App.openModal -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary btn-sm" id="globalModalCancel">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="globalModalConfirm">Confirm &amp; Proceed</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Faculty Edit / Mark Attendance Modal -->
-<div class="modal-overlay" id="editAttendanceModal">
-  <div class="modal-window">
-    <div class="modal-header">
-      <h3 class="modal-title">Update Session Attendance</h3>
-      <button class="modal-close-btn" onclick="closeModal('editAttendanceModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Session Number</label>
-        <input type="number" class="form-input" id="editSessionNumberInput" value="1">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Attendance Status</label>
-        <select class="form-select" id="editSessionStatusSelect">
-          <option value="present">Present (Attended)</option>
-          <option value="on_duty">On-Duty (OD)</option>
-          <option value="absent">Absent</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Faculty Remarks</label>
-        <textarea class="form-textarea" id="editSessionRemarksInput" rows="2" placeholder="e.g. Verified lab workbook / Approved"></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('editAttendanceModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitEditAttendance()">Save Changes</button>
-    </div>
-  </div>
-</div>
+  <!-- Dynamic Toast Shelf -->
+  <div class="toast-shelf" id="toastShelf"></div>
 
-<!-- On-Duty (OD) Application Modal -->
-<div class="modal-overlay" id="odApplicationModal">
-  <div class="modal-window">
-    <div class="modal-header">
-      <h3 class="modal-title">Apply On-Duty (OD) / Leave</h3>
-      <button class="modal-close-btn" onclick="closeModal('odApplicationModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Course Session</label>
-        <select class="form-select" id="odSessionSelect">
-          <option value="4">Session #4: Cryptographic Nonces</option>
-          <option value="9">Session #9: Telemetry Testing</option>
-          <option value="10">Session #10: Compliance &amp; Review</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Event Category</label>
-        <select class="form-select" id="odCategorySelect">
-          <option value="Hackathon / Symposium">Hackathon / Symposium</option>
-          <option value="Sports Tournament">Sports Tournament</option>
-          <option value="Conference Paper Presentation">Conference Paper Presentation</option>
-          <option value="Medical Emergency">Medical Emergency</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Detailed Reason &amp; Event Name</label>
-        <textarea class="form-textarea" id="odReasonInput" rows="3" placeholder="Describe the reason and specify the institutional event..."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('odApplicationModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitOdRequest()">Submit for Approval</button>
-    </div>
-  </div>
-</div>
-
-<!-- Timetable Modal -->
-<div class="modal-overlay" id="timetableModal">
-  <div class="modal-window" style="max-width: 650px;">
-    <div class="modal-header">
-      <h3 class="modal-title">21CS301 Course Timetable</h3>
-      <button class="modal-close-btn" onclick="closeModal('timetableModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <table class="vstudy-table" style="font-size: 0.8rem;">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Slot Time</th>
-            <th>Type</th>
-            <th>Venue / Lab</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Monday</strong></td>
-            <td>08:30 AM – 10:10 AM</td>
-            <td>Theory Lecture</td>
-            <td>CSE Block Hall 402</td>
-          </tr>
-          <tr>
-            <td><strong>Wednesday</strong></td>
-            <td>10:30 AM – 12:10 PM</td>
-            <td>Hands-on Practicum</td>
-            <td>Cloud Computing Lab 3</td>
-          </tr>
-          <tr>
-            <td><strong>Friday</strong></td>
-            <td>01:15 PM – 02:45 PM</td>
-            <td>Interactive Seminar</td>
-            <td>Smart Classroom 201</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-primary" onclick="closeModal('timetableModal')">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Hall Ticket Preview Modal -->
-<div class="modal-overlay" id="hallTicketModal">
-  <div class="modal-window" style="max-width: 600px;">
-    <div class="modal-header">
-      <h3 class="modal-title">Semester Examination Hall Ticket</h3>
-      <button class="modal-close-btn" onclick="closeModal('hallTicketModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div style="border: 2px solid #0f172a; padding: 1.5rem; border-radius: 8px; background: #ffffff;">
-        <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 0.75rem; margin-bottom: 1rem;">
-          <h2 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; text-transform: uppercase;">Saveetha School of Engineering</h2>
-          <div style="font-size: 0.72rem; color: #475569;">SIMATS • Autonomous Institution • Chennai</div>
-          <div style="font-weight: 700; font-size: 0.85rem; margin-top: 0.25rem;">END SEMESTER THEORY / PRACTICAL EXAMINATIONS</div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; margin-bottom: 1rem;">
-          <div>Candidate Name: <strong id="hallTicketStudentName">Arun Kumar S</strong></div>
-          <div>Register No: <strong id="hallTicketRegNo">192111001</strong></div>
-          <div>Course Code: <strong id="hallTicketCourseCode">21CS301</strong></div>
-          <div>Attendance: <strong id="hallTicketAttendancePct">80.00%</strong></div>
-        </div>
-
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 6px; font-size: 0.8rem; margin-bottom: 1rem;">
-          Course: <strong id="hallTicketCourseName">Distributed Cloud Computing &amp; Attendance Telemetry</strong>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #cbd5e1; padding-top: 0.75rem;">
-          <div style="font-size: 0.75rem;">
-            Eligibility Status: <span id="hallTicketEligibilityStatus"></span>
-          </div>
-          <div style="text-align: center;">
-            <div style="font-family: cursive; font-size: 0.95rem; color: #1e3a8a;">K. Ravichandran</div>
-            <div style="font-size: 0.65rem; color: #64748b;">Controller of Examinations</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('hallTicketModal')">Close</button>
-      <button class="btn-primary" id="hallTicketPrintBtn" onclick="window.print()">Print Official Ticket</button>
-    </div>
-  </div>
-</div>
-
-<!-- Supabase Modal -->
-<div class="modal-overlay" id="supabaseModal">
-  <div class="modal-window">
-    <div class="modal-header">
-      <h3 class="modal-title">Supabase Database Integration</h3>
-      <button class="modal-close-btn" onclick="closeModal('supabaseModal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div style="background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
-        <div style="font-size: 0.825rem; font-weight: 700; color: #047857;">PostgreSQL Persistence Active</div>
-        <div style="font-size: 0.75rem; color: #065f46;">AttendX synchronizes all attendance records, topics, and session plans to your Supabase PostgreSQL cluster.</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Supabase Project URL</label>
-        <input type="text" class="form-input" value="https://xyzcompany.supabase.co" readonly>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Primary Reference Offering ID</label>
-        <input type="text" class="form-input" value="2851d026-2f7b-46c4-92a5-053cf5e4f57d" readonly>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-primary" onclick="closeModal('supabaseModal')">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<script src="js/app.js"></script>
+  <!-- MaccaAttendX Modular Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

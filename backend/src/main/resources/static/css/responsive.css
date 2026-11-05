@@ -1,0 +1,85 @@
+/* ==============================================================================
+   MaccaAttendX - Responsive Design & Device Breakpoints
+   ============================================================================== */
+
+@media (max-width: 1200px) {
+  .stat-grid-8,
+  .stat-grid-7 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-2-1,
+  .dashboard-grid-1-1,
+  .dashboard-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .workspace-body {
+    padding: 1.25rem 1.25rem 2.5rem;
+  }
+
+  .stat-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .topbar {
+    padding: 0 1.25rem;
+  }
+
+  .search-wrapper {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile Sidebar Off-Canvas */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-wrapper {
+    margin-left: 0 !important;
+  }
+
+  .search-wrapper {
+    display: none;
+  }
+
+  .stat-grid-8,
+  .stat-grid-7,
+  .stat-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .role-btn {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.7rem;
+  }
+
+  .banner-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .table-header-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-toolbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

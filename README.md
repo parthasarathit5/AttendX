@@ -120,3 +120,4 @@ $java = "C:\Program Files\Java\jdk-25\bin\java.exe"
   - Generates live Base64 QR code image using ZXing
 - `GET /api/od-requests`
   - List and review On-Duty leave requests
+

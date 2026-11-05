@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaccaAttendX — Saveetha V-Study LMS Attendance Management</title>
+  <meta name="description" content="Production LMS Attendance Management System inspired by Saveetha V-Study Portal">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- MaccaAttendX Design System Stylesheets -->
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Master App Wrapper -->
+  <div class="app-wrapper">
+
+    <!-- Mobile Drawer Backdrop -->
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+
+    <!-- Collapsible Left Sidebar (Saveetha V-Study Navigation) -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Sidebar Brand Header -->
+      <div class="sidebar-brand">
+        <a href="javascript:void(0)" onclick="Navigation.navigateTo('dashboard')" class="brand-container">
+          <div class="brand-emblem">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+          </div>
+          <div class="brand-details">
+            <span class="brand-name">MaccaAttendX</span>
+            <span class="brand-subtext">Saveetha V-Study LMS</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Dynamic Navigation Menu by Active Role -->
+      <div class="sidebar-nav" id="sidebarNavContent">
+        <!-- Rendered by Navigation.renderSidebar() -->
+      </div>
+
+      <!-- Sidebar Status Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-info">
+          <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.78rem;">SIMATS Engineering</div>
+          <div style="font-size: 0.7rem; color: var(--present-green); display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--present-green);"></span>
+            Spring Boot JPA &bull; Supabase Live
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Application Shell -->
+    <div class="main-wrapper">
+
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+
+          <!-- Breadcrumb Navigation -->
+          <nav class="breadcrumb-container" aria-label="Breadcrumb">
+            <a href="javascript:void(0)" onclick="Navigation.navigateTo('dashboard')" class="breadcrumb-item">V-Study LMS</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current" id="breadcrumbCurrent">Dashboard</span>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Search Input -->
+          <div class="search-wrapper">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" class="search-input" id="globalSearchInput" placeholder="Search students, subjects, classes... [Enter]">
+          </div>
+
+          <!-- Quick Role Perspective Switcher Pill -->
+          <div class="role-switcher-pill" title="Switch portal perspective for pair-programming & verification">
+            <button class="role-btn active" data-role="ADMIN">Admin</button>
+            <button class="role-btn" data-role="TEACHER">Teacher</button>
+            <button class="role-btn" data-role="STUDENT">Student</button>
+            <button class="role-btn" data-role="PARENT">Parent</button>
+          </div>
+
+          <!-- Notification Trigger -->
+          <div style="position: relative;">
+            <button class="notification-trigger" id="notificationTrigger" aria-label="Notifications">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <span class="notification-ping" id="notificationPing"></span>
+            </button>
+
+            <!-- Notifications Dropdown Panel -->
+            <div class="dropdown-panel" id="notificationPanel" style="width: 360px; right: 0;">
+              <div class="dropdown-header">
+                <span class="dropdown-title">System Notifications</span>
+                <button class="btn btn-sm btn-text" onclick="App.markAllNotificationsRead()" style="font-size: 0.72rem; padding: 0;">Mark all read</button>
+              </div>
+              <div class="dropdown-body" id="notificationList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Trigger & Dropdown -->
+          <div style="position: relative;">
+            <div class="profile-chip" id="userProfileTrigger">
+              <div class="avatar-badge" id="topbarUserAvatar">AD</div>
+              <div class="profile-info">
+                <span class="profile-name" id="topbarUserName">Dr. V. Rajesh</span>
+                <span class="profile-role-tag" id="topbarUserRole">Dean of Academics</span>
+              </div>
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--text-light); margin-left: 0.2rem;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+
+            <!-- Profile Dropdown Menu -->
+            <div class="dropdown-panel" id="userProfileDropdown" style="width: 250px; right: 0;">
+              <div class="dropdown-header" style="flex-direction: column; align-items: flex-start;">
+                <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.88rem;" id="dropUserName">Dr. V. Rajesh</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;" id="dropUserEmail">rajesh.dean@saveetha.ac.in</div>
+              </div>
+              <div class="dropdown-body">
+                <div class="dropdown-item" onclick="Navigation.navigateTo('profile')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  <span>My Profile &amp; Bio</span>
+                </div>
+                <div class="dropdown-item" onclick="Navigation.navigateTo('settings')">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+                  <span>Security &amp; Preferences</span>
+                </div>
+                <div class="dropdown-item" style="color: var(--absent-red);" onclick="App.toast('Session terminated safely', 'info'); Navigation.navigateTo('dashboard');">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                  <span>Sign Out</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Saveetha V-Study Course Window Sub-Bar (Direct reference alignment) -->
+      <div class="course-header-bar" style="background: #FFFFFF; border-bottom: 1px solid var(--border-light); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--light-blue); color: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">
+            SSE
+          </div>
+          <div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 0.9rem;">
+              CS301 &bull; Design and Analysis of Algorithms
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-muted);">
+              Course Offering ID: <code style="font-family: monospace; font-size: 0.72rem; background: var(--bg-main); padding: 1px 4px; border-radius: 4px;">2851d026-2f7b-46c4-92a5-053cf5e4f57d</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Window Navigation Tabs (Overview, Topics, Sessions, Attendance, Assignments, Grading) -->
+        <div class="course-window-tabs" style="display: flex; gap: 0.35rem; background: var(--bg-main); padding: 0.25rem; border-radius: var(--radius-full); border: 1px solid var(--border-card);">
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('dashboard')">Overview</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('subjects')">Topics</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('timetable')">Sessions</button>
+          <button class="btn btn-sm btn-primary" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('attendance')">Attendance</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('calendar')">Calendar</button>
+          <button class="btn btn-sm btn-text" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;" onclick="Navigation.navigateTo('reports')">Reports</button>
+        </div>
+      </div>
+
+      <!-- Main Workspace Container (Dynamic View Port) -->
+      <main class="workspace-body" id="mainWorkspaceContainer">
+        <!-- Rendered dynamically by Dashboard.renderView() / AttendanceModule / CalendarModule / ReportsModule -->
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Reusable Global Modal Scrim & Dialog -->
+  <div class="modal-scrim" id="globalModalScrim">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <h3 class="modal-title" id="globalModalTitle">System Confirmation</h3>
+        <span class="modal-close-icon" id="globalModalClose">&times;</span>
+      </div>
+      <div class="modal-content" id="globalModalContent">
+        <!-- Injected via App.openModal -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary btn-sm" id="globalModalCancel">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="globalModalConfirm">Confirm &amp; Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Shelf -->
+  <div class="toast-shelf" id="toastShelf"></div>
+
+  <!-- MaccaAttendX Modular Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
