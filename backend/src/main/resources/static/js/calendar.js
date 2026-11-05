@@ -223,3 +223,4 @@ const CalendarModule = {
 };
 
 window.CalendarModule = CalendarModule;
+

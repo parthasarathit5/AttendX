@@ -113,6 +113,12 @@ const Navigation = {
 
   navigateTo(viewId) {
     this.currentView = viewId;
+    if (viewId === 'students' && window.StudentModule) {
+      window.StudentModule.state.activeProfileId = null;
+    }
+    if (viewId === 'teachers' && window.TeacherModule) {
+      window.TeacherModule.state.activeProfileId = null;
+    }
     this.renderSidebar();
     this.updateBreadcrumbs();
     
@@ -162,3 +168,4 @@ const Navigation = {
 };
 
 window.Navigation = Navigation;
+

@@ -664,3 +664,4 @@ const AttendanceModule = {
 };
 
 window.AttendanceModule = AttendanceModule;
+

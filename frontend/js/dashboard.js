@@ -31,6 +31,16 @@ const Dashboard = {
       window.CalendarModule?.render(container);
     } else if (viewId === 'reports') {
       window.ReportsModule?.render(container);
+    } else if (viewId === 'students') {
+      window.StudentModule?.render(container);
+    } else if (viewId === 'teachers') {
+      window.TeacherModule?.render(container);
+    } else if (viewId === 'classes' || viewId === 'my-classes') {
+      window.ClassModule?.render(container);
+    } else if (viewId === 'subjects' || viewId === 'my-subjects') {
+      window.SubjectModule?.render(container);
+    } else if (viewId === 'academic-years') {
+      window.AcademicYearModule?.render(container);
     } else {
       this.renderGenericModuleView(container, viewId);
     }

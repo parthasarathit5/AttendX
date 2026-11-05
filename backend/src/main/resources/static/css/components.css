@@ -633,3 +633,269 @@
   border-color: var(--primary-blue);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
+
+/* ------------------------------------------------------------------------------
+   MILESTONE 2: PROFILE HERO, TABS, PAGINATION & CSV WORKFLOWS
+   ------------------------------------------------------------------------------ */
+
+/* Profile Hero Card */
+.profile-hero-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.profile-hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--light-blue);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.profile-hero-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--brand-navy);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.profile-hero-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile-stat-box {
+  background: var(--bg-main);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  text-align: center;
+}
+
+.profile-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.profile-stat-num {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-top: 0.2rem;
+}
+
+/* Profile Tab Bar */
+.profile-tab-bar {
+  display: flex;
+  gap: 0.4rem;
+  background: #FFFFFF;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.profile-tab-btn {
+  padding: 0.55rem 1.15rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.profile-tab-btn:hover {
+  color: var(--primary-blue);
+  background-color: var(--light-blue);
+}
+
+.profile-tab-btn.active {
+  background-color: var(--primary-blue);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+/* Info Grid */
+.info-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-item-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.info-item-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Table Pagination Bar */
+.table-pagination-bar {
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-light);
+  background: #FFFFFF;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.pagination-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.page-num-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-card);
+  background: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.page-num-btn:hover:not(:disabled) {
+  background: var(--bg-main);
+  color: var(--text-dark);
+  border-color: #CBD5E1;
+}
+
+.page-num-btn.active {
+  background: var(--primary-blue);
+  color: #FFFFFF;
+  border-color: var(--primary-blue);
+}
+
+.page-num-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Sortable Table Header */
+.th-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+
+.th-sortable:hover {
+  color: var(--primary-blue);
+}
+
+/* Form Sections */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.form-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brand-navy);
+  margin: 1.25rem 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-section-title:first-child {
+  margin-top: 0;
+}
+
+/* Validation Alerts */
+.validation-error-alert {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  color: #991B1B;
+  font-size: 0.8rem;
+}
+
+.validation-error-alert ul {
+  margin: 0.35rem 0 0 1.2rem;
+  padding: 0;
+}
+
+/* CSV Upload Box */
+.csv-dropzone {
+  border: 2px dashed #CBD5E1;
+  border-radius: var(--radius-md);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background: #F8FAFC;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.csv-dropzone:hover {
+  border-color: var(--primary-blue);
+  background: var(--light-blue);
+}
+
+
