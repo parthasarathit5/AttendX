@@ -898,4 +898,137 @@
   background: var(--light-blue);
 }
 
+/* ------------------------------------------------------------------------------
+   MILESTONE 3: ATTENDANCE PRESENT / ABSENT BUTTON CONTROLS & PRINT STYLING
+   ------------------------------------------------------------------------------ */
+
+/* Two Primary Clickable Buttons: [PRESENT] and [ABSENT] */
+.att-btn-group {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-att-control {
+  padding: 0.45rem 1.15rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 1.5px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #475569;
+  letter-spacing: 0.04em;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  user-select: none;
+}
+
+.btn-att-control:hover:not(:disabled) {
+  border-color: #94A3B8;
+  transform: translateY(-1px);
+}
+
+/* PRESENT Active State */
+.btn-att-control.btn-present:hover:not(:disabled) {
+  border-color: #16A34A;
+  color: #16A34A;
+}
+
+.btn-att-control.btn-present.active-present {
+  background-color: #16A34A !important;
+  border-color: #16A34A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
+}
+
+/* ABSENT Active State */
+.btn-att-control.btn-absent:hover:not(:disabled) {
+  border-color: #DC2626;
+  color: #DC2626;
+}
+
+.btn-att-control.btn-absent.active-absent {
+  background-color: #DC2626 !important;
+  border-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
+}
+
+.btn-att-control:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.row-unmarked-warning {
+  background-color: #FFFBEB !important;
+}
+
+/* Print Friendly Stylesheet (A4 Professional Attendance Ledger) */
+@media print {
+  .sidebar,
+  .topbar,
+  .course-header-bar,
+  .dashboard-banner .banner-actions,
+  .banner-actions,
+  .role-switcher-pill,
+  .notification-trigger,
+  .profile-chip,
+  .toast-shelf,
+  .modal-scrim,
+  .table-pagination-bar,
+  .search-wrapper,
+  .btn,
+  .att-btn-group,
+  .nav-tabs {
+    display: none !important;
+  }
+
+  body, .app-wrapper, .main-wrapper {
+    background: #FFFFFF !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #000000 !important;
+  }
+
+  .main-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .workspace-body {
+    padding: 0.5cm 1cm !important;
+    max-width: 100% !important;
+  }
+
+  .dashboard-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .table-custom {
+    border: 1px solid #000 !important;
+    width: 100% !important;
+  }
+
+  .table-custom th, .table-custom td {
+    border: 1px solid #333 !important;
+    color: #000 !important;
+    padding: 6px 8px !important;
+    font-size: 9pt !important;
+  }
+
+  .print-only-header {
+    display: block !important;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+}
+
+
 

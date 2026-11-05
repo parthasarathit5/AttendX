@@ -26,6 +26,10 @@ const Dashboard = {
 
     // Secondary screen handlers
     if (viewId === 'attendance' || viewId === 'my-attendance') {
+      if (window.AttendanceModule) window.AttendanceModule.state.activeTab = 'marking';
+      window.AttendanceModule?.render(container);
+    } else if (viewId === 'attendance-history') {
+      if (window.AttendanceModule) window.AttendanceModule.state.activeTab = 'history';
       window.AttendanceModule?.render(container);
     } else if (viewId === 'calendar' || viewId === 'attendance-calendar') {
       window.CalendarModule?.render(container);

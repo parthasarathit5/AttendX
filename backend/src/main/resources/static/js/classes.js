@@ -364,3 +364,4 @@ const ClassModule = {
 };
 
 window.ClassModule = ClassModule;
+

@@ -257,3 +257,4 @@ const AcademicYearModule = {
 };
 
 window.AcademicYearModule = AcademicYearModule;
+
