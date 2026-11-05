@@ -93,3 +93,4 @@ if (Auth.hasRole('ADMIN')) {
 // Logout & invalidate session
 Auth.logout();
 ```
+

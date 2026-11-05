@@ -99,3 +99,4 @@ All outbound network requests flow through `frontend/js/api.js`. Key capabilitie
 3. **HTTP 409 Conflict**: Returned when submitting duplicate attendance for the same class/date/period, or attempting to register a duplicate registration number.
 4. **HTTP 403 Forbidden**: Returned if a Teacher attempts administrative actions (e.g. creating/deleting students, editing locked attendance).
 5. **HTTP 401 Unauthorized**: Handled automatically by clearing the expired session token and presenting the Supabase authentication dialog.
+
