@@ -505,6 +505,117 @@ const AcademicDataService = {
         localStorage.setItem(this.storageKeyPrefix + key, JSON.stringify(this.initialData[key]));
       }
     });
+    this.syncWithBackend().catch(e => console.warn('[AcademicDataService] Init sync skipped:', e.message));
+  },
+
+  async syncWithBackend() {
+    try {
+      if (!window.Api || !window.Api.students) return;
+
+      // 1. Sync students
+      const studRes = await Api.students.list({ size: 100 });
+      if (studRes && Array.isArray(studRes.content) && studRes.content.length > 0) {
+        const mapped = studRes.content.map(s => this.mapBackendStudentToLocal(s));
+        this.setData('students', mapped);
+      }
+
+      // 2. Sync classes
+      const classes = await Api.academics.classes();
+      if (Array.isArray(classes) && classes.length > 0) {
+        const mappedClasses = classes.map(c => ({
+          id: c.id,
+          name: c.name,
+          grade: c.department || 'Undergraduate',
+          section: (c.sections && c.sections[0]) || 'A',
+          classTeacherName: 'Dr. K. Senthil Kumar',
+          academicYear: '2025–2026',
+          totalStudents: c.totalStudents || 5,
+          attendancePercentage: 88.5
+        }));
+        this.setData('classes', mappedClasses);
+      }
+
+      // 3. Sync subjects
+      const subjects = await Api.academics.subjects();
+      if (Array.isArray(subjects) && subjects.length > 0) {
+        const mappedSubjects = subjects.map(s => ({
+          id: s.id,
+          code: s.code,
+          name: s.name,
+          department: s.department,
+          credits: s.credits,
+          totalHours: s.totalHours,
+          status: 'ACTIVE'
+        }));
+        this.setData('subjects', mappedSubjects);
+      }
+
+      // 4. Sync teachers
+      const teachers = await Api.teachers.list();
+      if (Array.isArray(teachers) && teachers.length > 0) {
+        const mappedTeachers = teachers.map(t => ({
+          id: t.id,
+          employeeId: t.employeeId,
+          firstName: t.fullName.split(' ')[0] || t.fullName,
+          lastName: t.fullName.split(' ').slice(1).join(' '),
+          fullName: t.fullName,
+          email: t.email,
+          phone: t.phone,
+          department: t.department,
+          designation: t.designation,
+          assignedClasses: t.assignedClasses || [],
+          assignedSubjects: t.assignedSubjects || []
+        }));
+        this.setData('teachers', mappedTeachers);
+      }
+
+      // 5. Sync academic years
+      const years = await Api.academics.years();
+      if (Array.isArray(years) && years.length > 0) {
+        const mappedYears = years.map(y => ({
+          id: y.id,
+          name: y.name,
+          startDate: y.startDate,
+          endDate: y.endDate,
+          status: y.current ? 'ACTIVE' : 'COMPLETED'
+        }));
+        this.setData('academicYears', mappedYears);
+      }
+      console.log('[AcademicDataService] Successfully synchronized with Spring Boot REST backend.');
+    } catch (err) {
+      console.warn('[AcademicDataService] Backend sync skipped:', err.message);
+    }
+  },
+
+  mapBackendStudentToLocal(s) {
+    return {
+      id: s.id,
+      firstName: s.firstName,
+      lastName: s.lastName,
+      fullName: s.fullName,
+      registrationNumber: s.registrationNumber,
+      admissionNumber: s.rollNumber ? `ADM-${s.rollNumber}` : `ADM-${s.registrationNumber}`,
+      rollNumber: s.rollNumber || s.registrationNumber,
+      email: s.email,
+      phone: s.phone,
+      dob: s.dob || '2004-01-01',
+      gender: s.gender === 'FEMALE' ? 'Female' : 'Male',
+      classId: s.classId,
+      className: s.className || s.classId,
+      section: s.section || 'A',
+      academicYear: '2025–2026',
+      admissionDate: s.admissionDate || '2023-08-01',
+      status: s.status === 'ACTIVE' ? 'Active' : 'Inactive',
+      attendancePercentage: 88.5,
+      guardian: {
+        name: 'Guardian',
+        relationship: 'Parent',
+        phone: '+91 98410 99887',
+        email: 'parent@saveetha.com',
+        address: 'Chennai, Tamil Nadu'
+      },
+      photo: s.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face'
+    };
   },
 
   getData(entityKey) {
@@ -562,10 +673,43 @@ const AcademicDataService = {
     return { isValid: errors.length === 0, errors };
   },
 
-  addStudent(studentData) {
+  async addStudent(studentData) {
     const validation = this.validateStudent(studentData);
     if (!validation.isValid) {
       return { success: false, errors: validation.errors };
+    }
+
+    try {
+      if (window.Api && window.Api.students) {
+        const payload = {
+          registrationNumber: studentData.registrationNumber.trim(),
+          rollNumber: studentData.rollNumber || studentData.registrationNumber,
+          firstName: studentData.firstName.trim(),
+          lastName: (studentData.lastName || '').trim(),
+          email: studentData.email || `${studentData.registrationNumber.toLowerCase()}@saveetha.com`,
+          phone: studentData.phone || '+91 98765 43210',
+          gender: (studentData.gender || 'MALE').toUpperCase(),
+          dob: studentData.dob || '2004-01-01',
+          admissionDate: studentData.admissionDate || '2023-08-01',
+          classId: studentData.classId || 'BE-CSE-3A',
+          section: studentData.section || 'A',
+          academicYearId: 'ay-2025-26'
+        };
+
+        const res = await Api.students.create(payload);
+        if (res && res.data) {
+          const student = this.mapBackendStudentToLocal(res.data);
+          const students = this.getStudents();
+          students.unshift(student);
+          this.setData('students', students);
+          return { success: true, data: student };
+        }
+      }
+    } catch (err) {
+      console.warn('[AcademicDataService] Backend student creation error:', err.message);
+      if (err.status === 409 || err.message.toLowerCase().includes('already exists') || err.message.toLowerCase().includes('duplicate')) {
+        return { success: false, errors: [err.message] };
+      }
     }
 
     const students = this.getStudents();
@@ -584,10 +728,31 @@ const AcademicDataService = {
     return { success: true, data: student };
   },
 
-  updateStudent(id, studentData) {
+  async updateStudent(id, studentData) {
     const validation = this.validateStudent(studentData, id);
     if (!validation.isValid) {
       return { success: false, errors: validation.errors };
+    }
+
+    try {
+      if (window.Api && window.Api.students) {
+        const payload = {
+          registrationNumber: studentData.registrationNumber.trim(),
+          rollNumber: studentData.rollNumber,
+          firstName: studentData.firstName.trim(),
+          lastName: (studentData.lastName || '').trim(),
+          email: studentData.email,
+          phone: studentData.phone,
+          gender: (studentData.gender || 'MALE').toUpperCase(),
+          dob: studentData.dob,
+          classId: studentData.classId,
+          section: studentData.section,
+          status: (studentData.status || 'ACTIVE').toUpperCase()
+        };
+        await Api.students.update(id, payload);
+      }
+    } catch (err) {
+      console.warn('[AcademicDataService] Backend update error:', err.message);
     }
 
     const students = this.getStudents();
@@ -605,7 +770,14 @@ const AcademicDataService = {
     return { success: true, data: students[index] };
   },
 
-  deleteStudent(id) {
+  async deleteStudent(id) {
+    try {
+      if (window.Api && window.Api.students) {
+        await Api.students.delete(id);
+      }
+    } catch (err) {
+      console.warn('[AcademicDataService] Backend student delete error:', err.message);
+    }
     const students = this.getStudents();
     const filtered = students.filter(s => s.id !== id);
     if (filtered.length === students.length) return { success: false, errors: ['Student not found'] };

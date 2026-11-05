@@ -1,5 +1,6 @@
 package com.attendx.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,9 +29,21 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\":false,\"message\":\"Full authentication is required to access this resource: Unauthorized\",\"timestamp\":\"" + java.time.Instant.now() + "\"}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"success\":false,\"message\":\"Access Denied: You do not have permission to perform this operation\",\"timestamp\":\"" + java.time.Instant.now() + "\"}");
+                })
+            )
             .authorizeHttpRequests(auth -> auth
-                // Public health probes and static assets
-                .requestMatchers("/api/v1/health", "/actuator/**", "/h2-console/**").permitAll()
+                // Public health probes, mock login in dev, and static assets
+                .requestMatchers("/api/v1/health", "/api/v1/auth/mock-token", "/actuator/**", "/h2-console/**").permitAll()
                 .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/favicon.ico").permitAll()
                 // All other endpoints require verified authentication
                 .requestMatchers("/api/v1/**").authenticated()

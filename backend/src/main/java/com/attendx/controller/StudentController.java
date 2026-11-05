@@ -94,5 +94,12 @@ public class StudentController {
         studentService.deactivateStudent(id);
         return ResponseEntity.ok(ApiResponse.success("Student account deactivated. Official records preserved in database.", null));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteStudent(@PathVariable String id) {
+        studentService.deactivateStudent(id);
+        return ResponseEntity.ok(ApiResponse.success("Student account deactivated. Official records preserved in database.", null));
+    }
 }
 

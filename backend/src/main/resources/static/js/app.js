@@ -13,11 +13,11 @@ const App = {
 
   modalConfirmCallback: null,
 
-  init() {
-    console.log('[MaccaAttendX] Initializing LMS Portal...');
+  async init() {
+    console.log('[MaccaAttendX] Initializing LMS Portal with Spring Boot REST Backend...');
 
     // 1. Initialize Auth
-    Auth.init();
+    await Auth.init();
 
     // 2. Initialize Navigation & Sidebar
     Navigation.init();
@@ -41,19 +41,20 @@ const App = {
   setupRoleSwitcher() {
     const roleBtns = document.querySelectorAll('.role-switcher-pill .role-btn');
     roleBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const role = e.currentTarget.getAttribute('data-role');
-        this.switchRole(role);
+        await this.switchRole(role);
       });
     });
   },
 
-  switchRole(role) {
-    Auth.setRole(role);
+  async switchRole(role) {
+    this.toast(`Switching to ${role} perspective via Spring Boot JWT...`, 'info');
+    await Auth.loginWithPersona(role);
     this.updateUserInterface();
     Navigation.renderSidebar();
     Navigation.navigateTo('dashboard');
-    this.toast(`Switched perspective to ${role} Portal`, 'info');
+    this.toast(`Authenticated as ${role}: ${Auth.getUser().name}`, 'success');
   },
 
   updateUserInterface() {
@@ -126,6 +127,74 @@ const App = {
         drop.classList.remove('active');
       }
     });
+  },
+
+  // ----------------------------------------------------------------------------
+  // Supabase Auth & Persona Modal
+  // ----------------------------------------------------------------------------
+  openLoginModal() {
+    const modalHtml = `
+      <div style="font-size: 0.88rem; color: var(--text-dark);">
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          Sign in using your institutional <strong>Supabase Auth</strong> account or choose a verified persona below:
+        </p>
+
+        <form id="supabaseLoginForm" onsubmit="event.preventDefault(); App.submitSupabaseLogin();" style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.25rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.78rem;">Institutional Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" placeholder="user@attendx.saveetha.com" required style="font-size: 0.85rem;" />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.78rem;">Password</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••••••" required style="font-size: 0.85rem;" />
+          </div>
+          <button type="submit" class="btn btn-primary" id="loginSubmitBtn" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+            Sign In with Supabase Auth
+          </button>
+        </form>
+
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+          <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; text-align: center;">
+            Or Quick Switch with Verified Spring Boot JWT Persona
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <button class="btn btn-secondary btn-sm" onclick="App.switchRole('ADMIN'); App.closeModal();">Admin (Dr. C. Ramesh)</button>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchRole('TEACHER'); App.closeModal();">Teacher (Dr. K. Senthil Kumar)</button>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchRole('STUDENT'); App.closeModal();">Student (Aarav Sharma)</button>
+            <button class="btn btn-secondary btn-sm" onclick="App.switchRole('PARENT'); App.closeModal();">Parent (Rajesh Sharma)</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    this.openModal('Institutional Identity Sign-In', modalHtml, null);
+  },
+
+  async submitSupabaseLogin() {
+    const email = document.getElementById('loginEmail')?.value;
+    const password = document.getElementById('loginPassword')?.value;
+    const btn = document.getElementById('loginSubmitBtn');
+    if (!email || !password) return;
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Authenticating with Supabase...';
+    }
+
+    try {
+      await Auth.loginWithSupabase(email, password);
+      this.closeModal();
+      this.updateUserInterface();
+      Navigation.renderSidebar();
+      Navigation.navigateTo('dashboard');
+      this.toast(`Authenticated successfully as ${Auth.getUser().name} (${Auth.getUser().role})`, 'success');
+    } catch (err) {
+      this.toast(err.message || 'Login failed. Please verify credentials.', 'error');
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Sign In with Supabase Auth';
+      }
+    }
   },
 
   renderNotifications() {

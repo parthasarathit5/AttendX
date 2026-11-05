@@ -141,11 +141,15 @@
                   <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                   <span>My Profile &amp; Bio</span>
                 </div>
+                <div class="dropdown-item" onclick="App.openLoginModal()">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                  <span>Supabase / Persona Sign-In</span>
+                </div>
                 <div class="dropdown-item" onclick="Navigation.navigateTo('settings')">
                   <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
                   <span>Security &amp; Preferences</span>
                 </div>
-                <div class="dropdown-item" style="color: var(--absent-red);" onclick="App.toast('Session terminated safely', 'info'); Navigation.navigateTo('dashboard');">
+                <div class="dropdown-item" style="color: var(--absent-red);" onclick="Auth.logout()">
                   <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                   <span>Sign Out</span>
                 </div>
@@ -210,10 +214,13 @@
   <!-- Dynamic Toast Shelf -->
   <div class="toast-shelf" id="toastShelf"></div>
 
-  <!-- MaccaAttendX Modular Scripts -->
+  <!-- External CDN Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/xlsx.full.min.js"></script>
-  <script src="js/auth.js"></script>
+
+  <!-- MaccaAttendX Modular Scripts -->
   <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/academicDataService.js"></script>
   <script src="js/students.js"></script>
   <script src="js/teachers.js"></script>

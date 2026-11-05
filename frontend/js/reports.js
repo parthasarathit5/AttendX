@@ -1492,10 +1492,21 @@ const ReportsModule = {
   // ============================================================================
   // EXPORT & PRINT HANDLERS
   // ============================================================================
-  exportExcel(customType) {
+  async exportExcel(customType) {
     const reportType = customType || this.state.activeCategory;
-    let data;
+    try {
+      if (window.Api && window.Api.reports && typeof window.Api.reports.downloadExcel === 'function') {
+        if (window.App) App.toast('Generating binary Excel (.xlsx) via Spring Boot Apache POI...', 'info');
+        await Api.reports.downloadExcel(reportType, this.state.filter.threshold || 75.0);
+        if (window.App) App.toast('Official Excel (.xlsx) workbook downloaded successfully!', 'success');
+        return;
+      }
+    } catch (err) {
+      console.warn('[ReportsModule] Server Excel download failed, using client SheetJS fallback:', err.message);
+      if (window.App) App.toast('Server export timed out, generating local SheetJS workbook...', 'warning');
+    }
 
+    let data;
     if (reportType === 'low-attendance') {
       const threshold = this.state.filter.threshold || 75.0;
       const lowAttendanceList = window.ReportsService ? ReportsService.getLowAttendanceStudents(threshold, this.state.filter) : [];

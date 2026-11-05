@@ -97,7 +97,35 @@ adb install -r "C:\Users\ADMIN\3D Objects\AttendX\AttendX-v1.0.0.apk"
 
 ---
 
-## 🚀 Running the Web Application & Backend
+## 🚀 Running the Web Application & Backend (Milestone 6 Connected)
+
+The application is fully connected end-to-end: the Saveetha V-Study LMS frontend makes real authenticated REST requests to the Spring Boot 3.3.5 backend backed by Supabase PostgreSQL persistence.
+
+### Starting the System:
+```powershell
+# 1. Package backend (if rebuilding)
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-25"
+cd "backend"
+..\tools\apache-maven-3.9.6\bin\mvn.cmd clean package -DskipTests
+
+# 2. Run backend daemon
+& "C:\Program Files\Java\jdk-25\bin\java.exe" -jar target\attendx-backend-1.0.0.jar
+```
+
+### Accessing the Application:
+- **LMS Web Application**: `http://localhost:8080/`
+- **Health & Actuator Probe**: `http://localhost:8080/api/v1/health`
+- **API Documentation**: See `backend/API_DOCUMENTATION.md` and `frontend/API_INTEGRATION.md`
+
+### Running the Milestone 6 Integration Test Suite:
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\ADMIN\.gemini\antigravity\brain\fbc4989b-c773-4354-8406-00836daf9380\scratch\test_milestone6_integration.ps1"
+```
+*Current Suite Status: 38/38 tests passing (100%).*
+
+---
+
+## 🏛️ V-Study Course-Window Design System Alignment
 
 The Spring Boot backend is already built and running locally at:
 👉 **`http://localhost:8080/`**

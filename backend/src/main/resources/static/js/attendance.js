@@ -489,17 +489,30 @@ const AttendanceModule = {
     this.reRenderTableAndCounters();
   },
 
-  loadStudentRoster() {
-    const rawStudents = AttendanceService.getStudentsForClass(this.state.classId, this.state.section);
-    this.students = rawStudents.map(s => ({
-      studentId: s.id,
-      registrationNumber: s.registrationNumber,
-      studentName: s.fullName,
-      rollNumber: s.rollNumber,
-      photo: s.photo,
-      status: null, // Initial unmarked state
-      remark: ''
-    }));
+  async loadStudentRoster() {
+    try {
+      const rawStudents = await AttendanceService.getStudentsForClassAsync(this.state.classId, this.state.section);
+      this.students = rawStudents.map(s => ({
+        studentId: s.studentId || s.id,
+        registrationNumber: s.registrationNumber,
+        studentName: s.fullName || s.studentName,
+        rollNumber: s.rollNumber,
+        photo: s.photo || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face',
+        status: null, // Initial unmarked state
+        remark: ''
+      }));
+    } catch (e) {
+      const rawStudents = AttendanceService.getStudentsForClass(this.state.classId, this.state.section);
+      this.students = rawStudents.map(s => ({
+        studentId: s.id,
+        registrationNumber: s.registrationNumber,
+        studentName: s.fullName,
+        rollNumber: s.rollNumber,
+        photo: s.photo,
+        status: null,
+        remark: ''
+      }));
+    }
   },
 
   reRenderTableAndCounters() {

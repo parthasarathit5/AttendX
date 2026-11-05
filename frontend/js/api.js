@@ -1,99 +1,341 @@
 /**
- * MaccaAttendX - API Client Layer
- * Interfaces with Spring Boot REST Backend & Supabase
+ * MaccaAttendX - Centralized API Client & HTTP Interceptor
+ * Strictly enforces Bearer token authentication, timeout control,
+ * uniform error handling, and direct mapping to Spring Boot REST endpoints.
  */
 
 const Api = {
-  baseUrl: window.location.origin,
+  // Centralized API Base URL configuration (VITE_API_BASE_URL or auto-detected)
+  getBaseUrl() {
+    if (window.__ATTENDX_CONFIG__ && window.__ATTENDX_CONFIG__.API_BASE_URL) {
+      return window.__ATTENDX_CONFIG__.API_BASE_URL;
+    }
+    // If running on backend origin (e.g. port 8080 or Render unified container)
+    if (window.location.port === '8080' || window.location.pathname.startsWith('/api')) {
+      return '/api/v1';
+    }
+    // Default development Spring Boot server
+    return 'http://localhost:8080/api/v1';
+  },
 
   async request(endpoint, options = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
+    const baseUrl = this.getBaseUrl();
+    const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+    
+    // Default headers
     const headers = {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       ...options.headers
     };
 
+    // Attach Bearer token if available
+    const token = window.Auth ? window.Auth.getToken() : null;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Abort timeout (12s)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 12000);
+
     try {
-      const response = await fetch(url, { ...options, headers });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      // Handle binary download responses (e.g. Excel)
+      if (options.responseType === 'blob') {
+        if (!response.ok) {
+          throw new Error(`Download failed with status ${response.status}`);
+        }
+        return await response.blob();
       }
-      return await response.json();
+
+      const json = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const errorMsg = (json && json.message) || (json && json.error) || `HTTP Error ${response.status}`;
+        
+        // Handle specific HTTP Status Codes
+        if (response.status === 401) {
+          console.warn('[Api] 401 Unauthorized encountered. Session may be expired.');
+          if (window.Auth && typeof window.Auth.handleUnauthorized === 'function') {
+            window.Auth.handleUnauthorized();
+          }
+        } else if (response.status === 403) {
+          console.warn('[Api] 403 Forbidden: Access denied for current role.');
+        } else if (response.status === 409) {
+          console.warn('[Api] 409 Conflict: Duplicate schedule or record detected.');
+        }
+
+        const err = new Error(errorMsg);
+        err.status = response.status;
+        err.data = json;
+        throw err;
+      }
+
+      return json;
     } catch (error) {
-      console.warn(`[Api.request] Fallback active for ${endpoint}:`, error.message);
-      return null;
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('API Request timed out after 12 seconds. Please check backend connectivity.');
+      }
+      throw error;
     }
   },
 
-  // Role-based Dashboard Data
-  async getDashboardData(role) {
-    const res = await this.request(`/api/dashboard/${role.toLowerCase()}`);
-    if (res) return res;
+  // --------------------------------------------------------------------------
+  // 1. AUTHENTICATION & USER PROFILE
+  // --------------------------------------------------------------------------
+  auth: {
+    async me() {
+      const res = await Api.request('/auth/me');
+      return res && res.data ? res.data : null;
+    },
+    async mockToken(role = 'ADMIN') {
+      const res = await Api.request('/auth/mock-token', {
+        method: 'POST',
+        body: JSON.stringify({ role: role.toUpperCase() })
+      });
+      return res && res.data ? res.data : null;
+    }
+  },
 
-    // Rich initial academic dataset reflecting Saveetha V-Study LMS standards
+  // --------------------------------------------------------------------------
+  // 2. DASHBOARD DATA
+  // --------------------------------------------------------------------------
+  dashboard: {
+    async get(role) {
+      const res = await Api.request(`/dashboard/${role.toLowerCase()}`);
+      return res && res.data ? res.data : null;
+    }
+  },
+
+  // Legacy facade for backwards compatibility with Milestone 1 code
+  async getDashboardData(role) {
+    try {
+      const data = await this.dashboard.get(role);
+      if (data) return data;
+    } catch (e) {
+      console.warn('[Api.getDashboardData] Backend unreachable, using fallback UI structure:', e.message);
+    }
     return MockData.getDashboard(role);
   },
 
-  // Attendance Endpoints
-  async getAttendanceSummary(registerNumber = '192111001') {
-    const res = await this.request(`/api/course-attendance/course-offerings/2851d026-2f7b-46c4-92a5-053cf5e4f57d/my-attendance?registerNumber=${registerNumber}`);
-    if (res) return res;
-    return MockData.attendanceSummary;
-  },
+  // --------------------------------------------------------------------------
+  // 3. STUDENT MANAGEMENT
+  // --------------------------------------------------------------------------
+  students: {
+    async list(params = {}) {
+      const q = new URLSearchParams();
+      if (params.page !== undefined) q.append('page', params.page);
+      if (params.size !== undefined) q.append('size', params.size);
+      if (params.query) q.append('query', params.query);
+      if (params.classId && params.classId !== 'ALL') q.append('classId', params.classId);
+      if (params.section && params.section !== 'ALL') q.append('section', params.section);
+      if (params.gender && params.gender !== 'ALL') q.append('gender', params.gender);
+      if (params.status && params.status !== 'ALL') q.append('status', params.status);
 
-  async getStudentAttendance(registerNumber = '192111001') {
-    const res = await this.request(`/api/course-attendance/course-offerings/2851d026-2f7b-46c4-92a5-053cf5e4f57d/my-attendance?registerNumber=${registerNumber}`);
-    if (res && res.summary) {
-      return {
-        attendancePercentage: res.summary.attendance_percentage,
-        totalSessions: res.summary.total_sessions,
-        presentSessions: res.summary.present_sessions,
-        absentSessions: res.summary.absent_sessions,
-        odSessions: res.summary.od_sessions,
-        isEligible: res.summary.is_eligible,
-        sessions: (res.logs || []).map(l => ({
-          date: l.date,
-          period: `Session ${l.session_number}`,
-          subject: 'Design & Analysis of Algorithms',
-          status: l.status.toUpperCase(),
-          timestamp: l.created_at ? l.created_at.substring(11, 19) : '08:31:00'
-        }))
-      };
+      const qs = q.toString() ? `?${q.toString()}` : '';
+      const res = await Api.request(`/students${qs}`);
+      return res && res.data ? res.data : null;
+    },
+
+    async get(id) {
+      const res = await Api.request(`/students/${id}`);
+      return res && res.data ? res.data : null;
+    },
+
+    async create(studentData) {
+      const res = await Api.request('/students', {
+        method: 'POST',
+        body: JSON.stringify(studentData)
+      });
+      return res && res.data ? res.data : null;
+    },
+
+    async update(id, studentData) {
+      const res = await Api.request(`/students/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(studentData)
+      });
+      return res && res.data ? res.data : null;
+    },
+
+    async delete(id) {
+      const res = await Api.request(`/students/${id}`, {
+        method: 'DELETE'
+      });
+      return res && res.data ? res.data : null;
     }
-    return {
-      attendancePercentage: 86.7,
-      totalSessions: 120,
-      presentSessions: 104,
-      absentSessions: 8,
-      odSessions: 8,
-      isEligible: true,
-      sessions: [
-        { date: '2026-11-05', period: 'Period 1 (08:30 - 09:20)', subject: 'Design & Analysis of Algorithms', status: 'PRESENT', timestamp: '08:31:14 AM' },
-        { date: '2026-11-04', period: 'Period 1 (08:30 - 09:20)', subject: 'Design & Analysis of Algorithms', status: 'LATE', timestamp: '08:44:02 AM' },
-        { date: '2026-11-03', period: 'Period 1 (08:30 - 09:20)', subject: 'Design & Analysis of Algorithms', status: 'PRESENT', timestamp: '08:29:40 AM' },
-        { date: '2026-11-02', period: 'Period 1 (08:30 - 09:20)', subject: 'Design & Analysis of Algorithms', status: 'PRESENT', timestamp: '08:30:11 AM' },
-        { date: '2026-10-30', period: 'Period 1 (08:30 - 09:20)', subject: 'Design & Analysis of Algorithms', status: 'OD', timestamp: '08:30:00 AM' }
-      ]
-    };
   },
 
-  async submitAttendanceSession(sessionData) {
-    const res = await this.request('/api/course-attendance/mark', {
-      method: 'POST',
-      body: JSON.stringify(sessionData)
-    });
-    return res || { success: true, message: "Attendance session recorded and locked successfully." };
+  // --------------------------------------------------------------------------
+  // 4. TEACHERS & FACULTY
+  // --------------------------------------------------------------------------
+  teachers: {
+    async list() {
+      const res = await Api.request('/teachers');
+      return res && res.data ? res.data : [];
+    },
+
+    async get(id) {
+      const res = await Api.request(`/teachers/${id}`);
+      return res && res.data ? res.data : null;
+    }
   },
 
-  // Leave Applications
-  async getLeaveApplications() {
-    const res = await this.request('/api/od-requests');
-    if (res) return res;
-    return MockData.leaveRequests;
+  // --------------------------------------------------------------------------
+  // 5. ACADEMIC HIERARCHY
+  // --------------------------------------------------------------------------
+  academics: {
+    async years() {
+      const res = await Api.request('/academics/years');
+      return res && res.data ? res.data : [];
+    },
+
+    async classes() {
+      const res = await Api.request('/academics/classes');
+      return res && res.data ? res.data : [];
+    },
+
+    async subjects() {
+      const res = await Api.request('/academics/subjects');
+      return res && res.data ? res.data : [];
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // 6. ATTENDANCE MANAGEMENT
+  // --------------------------------------------------------------------------
+  attendance: {
+    async getRoster(classId, section = 'A') {
+      const res = await Api.request(`/attendance/roster?classId=${encodeURIComponent(classId)}&section=${encodeURIComponent(section)}`);
+      return res && res.data ? res.data : [];
+    },
+
+    async submitSession(payload) {
+      const res = await Api.request('/attendance/sessions', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      return res && res.data ? res.data : null;
+    },
+
+    async getSession(id) {
+      const res = await Api.request(`/attendance/sessions/${id}`);
+      return res && res.data ? res.data : null;
+    },
+
+    async getHistory(filters = {}) {
+      const q = new URLSearchParams();
+      if (filters.classId && filters.classId !== 'ALL') q.append('classId', filters.classId);
+      if (filters.section && filters.section !== 'ALL') q.append('section', filters.section);
+      if (filters.subjectCode && filters.subjectCode !== 'ALL') q.append('subjectCode', filters.subjectCode);
+      if (filters.startDate) q.append('startDate', filters.startDate);
+      if (filters.endDate) q.append('endDate', filters.endDate);
+
+      const qs = q.toString() ? `?${q.toString()}` : '';
+      const res = await Api.request(`/attendance/history${qs}`);
+      return res && res.data ? res.data : [];
+    },
+
+    async correctRecord(recordId, payload) {
+      const res = await Api.request(`/attendance/records/${recordId}/correct`, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      return res && res.data ? res.data : null;
+    },
+
+    async getCorrections(recordId) {
+      const res = await Api.request(`/attendance/records/${recordId}/corrections`);
+      return res && res.data ? res.data : [];
+    },
+
+    async getMyAttendance() {
+      const res = await Api.request('/attendance/my-attendance');
+      return res && res.data ? res.data : null;
+    },
+
+    async getParentChildrenAttendance() {
+      const res = await Api.request('/attendance/parent/children');
+      return res && res.data ? res.data : [];
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // 7. REPORTS & ANALYTICS
+  // --------------------------------------------------------------------------
+  reports: {
+    async getOverall(filters = {}) {
+      const q = new URLSearchParams();
+      if (filters.classId && filters.classId !== 'ALL') q.append('classId', filters.classId);
+      if (filters.section && filters.section !== 'ALL') q.append('section', filters.section);
+      if (filters.subjectCode && filters.subjectCode !== 'ALL') q.append('subjectCode', filters.subjectCode);
+      if (filters.startDate) q.append('startDate', filters.startDate);
+      if (filters.endDate) q.append('endDate', filters.endDate);
+
+      const qs = q.toString() ? `?${q.toString()}` : '';
+      const res = await Api.request(`/reports/overall${qs}`);
+      return res && res.data ? res.data : null;
+    },
+
+    async getLowAttendance(threshold = 75.0) {
+      const res = await Api.request(`/reports/low-attendance?threshold=${threshold}`);
+      return res && res.data ? res.data : [];
+    },
+
+    async getStudentReport(regNo) {
+      const res = await Api.request(`/reports/student/${encodeURIComponent(regNo)}`);
+      return res && res.data ? res.data : null;
+    },
+
+    getExcelExportUrl(reportType = 'low-attendance', threshold = 75.0) {
+      const baseUrl = Api.getBaseUrl();
+      const token = window.Auth ? window.Auth.getToken() : '';
+      return `${baseUrl}/reports/export/excel?reportType=${encodeURIComponent(reportType)}&threshold=${threshold}&token=${encodeURIComponent(token)}`;
+    },
+
+    async downloadExcel(reportType = 'low-attendance', threshold = 75.0) {
+      const blob = await Api.request(`/reports/export/excel?reportType=${encodeURIComponent(reportType)}&threshold=${threshold}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `AttendX_${reportType}_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // 8. SETTINGS
+  // --------------------------------------------------------------------------
+  settings: {
+    async getThreshold() {
+      const res = await Api.request('/settings/threshold');
+      return res && res.data ? parseFloat(res.data) : 75.0;
+    },
+
+    async updateThreshold(threshold) {
+      const res = await Api.request('/settings/threshold', {
+        method: 'PUT',
+        body: JSON.stringify({ threshold: parseFloat(threshold) })
+      });
+      return res && res.data ? parseFloat(res.data) : 75.0;
+    }
   }
 };
 
-// Rich Academic Mock Data for V-Study LMS Experience
+// Rich Academic Mock Data for V-Study LMS Experience Fallback
 const MockData = {
   attendanceSummary: {
     total_sessions: 120,
@@ -136,87 +378,64 @@ const MockData = {
     if (role === 'ADMIN') {
       return {
         stats: {
-          totalStudents: 2840,
-          totalTeachers: 184,
-          totalClasses: 64,
-          totalSubjects: 142,
-          todayPresent: 2492,
-          todayAbsent: 248,
-          lateStudents: 68,
-          attendancePct: 87.7
+          totalStudents: 5,
+          totalTeachers: 2,
+          totalClasses: 3,
+          totalSubjects: 5,
+          todayPresent: 4,
+          todayAbsent: 1,
+          lateStudents: 0,
+          attendancePct: 80.0
         },
         classComparisons: [
-          { name: "B.Tech CSE - 3rd Year (A)", pct: 92.4 },
-          { name: "B.Tech CSE - 3rd Year (B)", pct: 89.1 },
-          { name: "B.Tech ECE - 2nd Year (A)", pct: 86.8 },
-          { name: "B.Tech MECH - 4th Year", pct: 81.5 },
-          { name: "B.Tech IT - 2nd Year", pct: 74.2, warning: true }
+          { name: "B.E. Computer Science & Engineering - III Year A", pct: 80.0 },
+          { name: "B.E. Computer Science & Engineering - III Year B", pct: 88.5 },
+          { name: "B.E. Electronics & Communication - II Year A", pct: 88.5 }
         ],
         lowAttendanceWatchlist: [
-          { name: "Rithvik N", regNo: "192111082", class: "CSE - 3A", pct: 68.4, status: "Critical Shortfall" },
-          { name: "Aishwarya M", regNo: "192111041", class: "IT - 2B", pct: 71.0, status: "Warning (<75%)" },
-          { name: "Dinesh V", regNo: "192111105", class: "MECH - 4", pct: 64.2, status: "Critical Shortfall" }
+          { name: "Abhinav Patel", regNo: "192211002", class: "BE-CSE-3A (A)", pct: 60.0, status: "Critical Shortfall" }
         ]
       };
     } else if (role === 'TEACHER') {
       return {
         stats: {
-          myClasses: 4,
-          mySubjects: 3,
-          totalStudents: 168,
-          todayClasses: 3,
-          markedCount: 2,
+          myClasses: 2,
+          mySubjects: 2,
+          totalStudents: 5,
+          todayClasses: 2,
+          markedCount: 1,
           pendingCount: 1,
           avgAttendance: 88.4
         },
         todaySchedule: [
-          { period: "Period 1 (08:30 - 10:10)", subject: "21CS301 - Cloud & Telemetry", class: "CSE 3-A", room: "Hall 402", status: "COMPLETED" },
-          { period: "Period 2 (10:30 - 12:10)", subject: "21CS305 - Distributed Systems", class: "CSE 3-B", room: "Lab 3", status: "COMPLETED" },
-          { period: "Period 4 (01:15 - 02:45)", subject: "21CS301 - Practicum", class: "CSE 3-A", room: "Lab 2", status: "PENDING" }
+          { period: "Period 1 (08:30 - 09:20)", subject: "CS301 - Design and Analysis of Algorithms", class: "BE-CSE-3A (A)", room: "LH-301", status: "COMPLETED" },
+          { period: "Period 2 (09:20 - 10:10)", subject: "CS302 - Database Management Systems", class: "BE-CSE-3A (A)", room: "LH-301", status: "PENDING" }
         ]
       };
     } else if (role === 'STUDENT') {
       return {
         stats: {
-          overallPct: 86.7,
-          presentPeriods: 96,
-          absentPeriods: 11,
-          latePeriods: 4,
-          leavePeriods: 3,
-          targetMargin: "+12 safe sessions"
+          overallPct: 80.0,
+          presentPeriods: 4,
+          absentPeriods: 1,
+          latePeriods: 0,
+          leavePeriods: 0,
+          targetMargin: "+2 safe sessions"
         },
         subjects: [
-          { code: "21CS301", name: "Distributed Cloud Systems & Telemetry", present: 28, total: 32, pct: 87.5 },
-          { code: "21CS302", name: "Database Internals & Supabase RLS", present: 26, total: 30, pct: 86.7 },
-          { code: "21CS303", name: "Network Routing & Microservices", present: 22, total: 31, pct: 70.9, warning: true },
-          { code: "21CS304", name: "Machine Learning Foundations", present: 20, total: 22, pct: 90.9 }
+          { code: "CS301", name: "Design and Analysis of Algorithms", faculty: "Dr. K. Senthil Kumar", present: 1, total: 1, percentage: 100.0 },
+          { code: "CS302", name: "Database Management Systems", faculty: "Dr. Meenakshi Sundaram", present: 0, total: 1, percentage: 0.0 }
         ]
       };
-    } else { // PARENT
+    } else {
       return {
         stats: {
-          linkedChildren: 2,
-          todayAttendance: "All Present (2/2)",
-          overallPct: "Aarav: 86.7% • Diya: 92.4%",
-          absentNotifications: 0
+          linkedChildren: 1,
+          todayAttendance: "All Present (1/1)",
+          overallPct: "Aarav: 100.0%"
         },
         children: [
-          {
-            name: "Arun Kumar S",
-            regNo: "192111001",
-            grade: "B.Tech CSE - 3rd Year (A)",
-            overallPct: 86.7,
-            todayStatus: "Present (In Class: Hall 402)",
-            recentDate: "Today 08:28 AM (Biometric Gate Scan)"
-          },
-          {
-            name: "Diya Kumar S",
-            regNo: "23EC089",
-            grade: "B.Tech ECE - 1st Year (B)",
-            overallPct: 92.4,
-            todayStatus: "Present (In Class: Lab 2)",
-            recentDate: "Today 08:34 AM (Biometric Gate Scan)"
-          }
+          { studentId: "stu-001", registrationNumber: "192211001", fullName: "Aarav Sharma", className: "BE-CSE-3A", section: "A", attendancePercentage: 100.0, alert: false }
         ]
       };
     }
@@ -224,4 +443,4 @@ const MockData = {
 };
 
 window.Api = Api;
-
+window.MockData = MockData;

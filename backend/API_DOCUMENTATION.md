@@ -4,12 +4,23 @@
 
 ---
 
-## 1. Authentication
-All endpoints under `/api/v1/**` (except `/api/v1/health`) require an HTTP `Authorization` header:
+## 1. Authentication & Profiles (`/api/v1/auth`)
+All endpoints under `/api/v1/**` (except `/api/v1/health` and `/api/v1/auth/mock-token`) require an HTTP `Authorization` header:
 ```http
 Authorization: Bearer <Supabase_JWT_Token_or_Mock_Token>
 ```
-Supported Development Mock Tokens (when `MOCK_TOKENS_ENABLED=true`):
+
+#### `GET /api/v1/auth/me`
+- **Role**: All authenticated callers
+- **Purpose**: Returns the caller's server-resolved profile, trusted institutional role (`ADMIN`, `TEACHER`, `STUDENT`, `PARENT`), institution name, and role-specific metadata (Teacher employee ID & assigned subjects; Student registration number & class; Parent linked wards).
+- **Response**: `200 OK` with `UserProfileResponse`.
+
+#### `POST /api/v1/auth/mock-token`
+- **Role**: Public (Dev Mode)
+- **Request Body**: `{ "role": "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" }`
+- **Response**: `200 OK` with `{ "token": "dev-token-...", "role": "...", "expiresIn": 86400 }`.
+
+Supported Development Mock Tokens:
 - `Bearer dev-token-admin` (Dr. C. Ramesh, Administrator)
 - `Bearer dev-token-teacher-001` (Dr. K. Senthil Kumar, Faculty)
 - `Bearer dev-token-teacher-002` (Dr. Meenakshi Sundaram, Faculty)
@@ -18,7 +29,27 @@ Supported Development Mock Tokens (when `MOCK_TOKENS_ENABLED=true`):
 
 ---
 
-## 2. Endpoints Catalog
+## 2. Role Dashboards (`/api/v1/dashboard`)
+
+#### `GET /api/v1/dashboard/admin`
+- **Role**: `ADMIN`
+- **Response**: Live stats (`totalStudents`, `activeFaculty`, `todaySessions`, `todayPresentRate`, `debarredRiskCount`), quick actions, and recent activity.
+
+#### `GET /api/v1/dashboard/teacher`
+- **Role**: `TEACHER`
+- **Response**: Live stats (`myClasses`, `todayLectures`, `avgAttendance`, `pendingSubmissions`), assigned subjects, and schedule.
+
+#### `GET /api/v1/dashboard/student`
+- **Role**: `STUDENT`
+- **Response**: Live stats (`overallPct`, `classesAttended`, `totalConducted`, `shortfallMargin`), course-wise percentage breakdown.
+
+#### `GET /api/v1/dashboard/parent`
+- **Role**: `PARENT`
+- **Response**: Live stats (`linkedChildren`, `alertsCount`), linked children cards, attendance warnings.
+
+---
+
+## 3. Endpoints Catalog
 
 ### 2.1 System & Health Probes
 #### `GET /api/v1/health`
@@ -153,6 +184,16 @@ Supported Development Mock Tokens (when `MOCK_TOKENS_ENABLED=true`):
 #### `GET /api/v1/attendance/records/{id}/corrections`
 - **Role**: `ADMIN`, `TEACHER`
 - **Response**: Audit trail history for the given record
+
+#### `GET /api/v1/attendance/my-attendance`
+- **Role**: `STUDENT`
+- **Security / IDOR Safe**: Automatically resolves the authenticated student's own record from JWT caller claims. No ID can be manipulated in the request.
+- **Response**: `200 OK` with overall percentage, attended vs conducted, course-by-course status, and recent lecture log.
+
+#### `GET /api/v1/attendance/parent/children`
+- **Role**: `PARENT`
+- **Security / IDOR Safe**: Automatically queries linked wards for the caller's verified email from the `guardians` database table.
+- **Response**: `200 OK` with list of children, attendance metrics, and alerts.
 
 ---
 
