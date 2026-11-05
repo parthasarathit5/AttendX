@@ -1,0 +1,22 @@
+﻿{
+    "version":  "1.0.0",
+    "service":  "AttendX Backup \u0026 Recovery System",
+    "timestamp":  "2026-11-05T20:04:16.9870802+05:30",
+    "tables":  [
+                   "institutions",
+                   "user_profiles",
+                   "academic_years",
+                   "classes",
+                   "sections",
+                   "subjects",
+                   "teachers",
+                   "students",
+                   "teacher_assignments",
+                   "student_guardians",
+                   "attendance_sessions",
+                   "attendance_records",
+                   "attendance_correction_audit"
+               ],
+    "retentionPolicy":  "30 Days Point-in-time",
+    "storageLocation":  "Encrypted Institutional Cold Storage"
+}

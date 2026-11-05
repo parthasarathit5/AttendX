@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +42,12 @@ public class SecurityConfig {
                     response.getWriter().write("{\"success\":false,\"message\":\"Access Denied: You do not have permission to perform this operation\",\"timestamp\":\"" + java.time.Instant.now() + "\"}");
                 })
             )
+            .headers(headers -> headers
+                .contentTypeOptions(Customizer.withDefaults()) // X-Content-Type-Options: nosniff
+                .xssProtection(Customizer.withDefaults())      // X-XSS-Protection
+                .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                .frameOptions(frame -> frame.disable())        // Enabled for local h2-console
+            )
             .authorizeHttpRequests(auth -> auth
                 // Public health probes, mock login in dev, and static assets
                 .requestMatchers("/api/v1/health", "/api/v1/auth/mock-token", "/actuator/**", "/h2-console/**").permitAll()
@@ -49,7 +56,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll()
             )
-            .headers(headers -> headers.frameOptions(frame -> frame.disable())) // for h2-console
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

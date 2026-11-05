@@ -63,7 +63,7 @@ public class StudentController {
         if (SecurityUtils.hasRole(UserRole.STUDENT)) {
             StudentDTO student = studentService.getStudentById(id);
             if (!student.getEmail().equalsIgnoreCase(SecurityUtils.getCurrentUserEmail())) {
-                throw new UnauthorizedException("Access denied: You may only view your own student academic profile.");
+                throw new org.springframework.security.access.AccessDeniedException("Access denied: You may only view your own student academic profile.");
             }
             return ResponseEntity.ok(ApiResponse.success(student));
         }

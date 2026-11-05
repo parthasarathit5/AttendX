@@ -119,3 +119,44 @@ INSERT INTO course_offerings (
     TRUE,
     'Comprehensive study of distributed consensus, cloud architectures, real-time microservice telemetry, automated geofenced attendance tracking, and edge computing synchronization.'
 ) ON CONFLICT (course_offering_id) DO NOTHING;
+
+-- ============================================================================
+-- SUPABASE POSTGRESQL ROW LEVEL SECURITY (RLS) POLICIES
+-- ============================================================================
+
+-- Enable RLS on core tables
+ALTER TABLE attendx_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE course_offerings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE course_topics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE course_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE attendance_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE od_requests ENABLE ROW LEVEL SECURITY;
+
+-- 1. Service Role (Spring Boot backend JDBC connection) has full access
+CREATE POLICY service_role_full_access_users ON attendx_users FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY service_role_full_access_offerings ON course_offerings FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY service_role_full_access_topics ON course_topics FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY service_role_full_access_sessions ON course_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY service_role_full_access_logs ON attendance_logs FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY service_role_full_access_od ON od_requests FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- 2. Authenticated Institutional Read Access
+CREATE POLICY auth_users_read_profile ON attendx_users FOR SELECT TO authenticated
+    USING (auth.jwt() ->> 'email' = email);
+
+CREATE POLICY auth_users_read_courses ON course_offerings FOR SELECT TO authenticated
+    USING (launched = true);
+
+CREATE POLICY auth_users_read_topics ON course_topics FOR SELECT TO authenticated
+    USING (true);
+
+CREATE POLICY auth_users_read_sessions ON course_sessions FOR SELECT TO authenticated
+    USING (true);
+
+CREATE POLICY auth_students_read_own_attendance ON attendance_logs FOR SELECT TO authenticated
+    USING (user_id = auth.uid() OR register_number = (auth.jwt() ->> 'register_number'));
+
+CREATE POLICY auth_students_manage_own_od ON od_requests FOR ALL TO authenticated
+    USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+
