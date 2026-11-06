@@ -1,6 +1,6 @@
 # AttendX — Intelligent LMS Attendance Telemetry System
 
-> **Primary Design Reference**: [Saveetha V-Study Course Window](https://vstudy.saveetha.com/dashboard/lms/my-learning/course-window?courseOfferingId=2851d026-2f7b-46c4-92a5-053cf5e4f57d)  
+> **Primary Design Reference**: [Saveetha V-Study Course Window]
 > **Course Offering Reference ID**: `2851d026-2f7b-46c4-92a5-053cf5e4f57d`  
 > **Technology Stack**: Java + Spring Boot + Supabase (PostgreSQL) + HTML/CSS/JavaScript + React Native (Android APK)
 
